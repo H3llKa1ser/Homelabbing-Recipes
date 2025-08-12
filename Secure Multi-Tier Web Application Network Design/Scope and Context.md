@@ -8,9 +8,9 @@ You’re tasked with securing a small company’s new web application.
 
 #### 2) Sensitive customer data is stored in the backend database.
 
-### 3) Developers need secure remote access for maintenance.
+#### 3) Developers need secure remote access for maintenance.
 
-### 4) Regulatory compliance (e.g., GDPR) requires encryption, logging, and access control.
+#### 4) Regulatory compliance (e.g., GDPR) requires encryption, logging, and access control.
 
 ### Key Requirements:
 
