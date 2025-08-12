@@ -9,3 +9,7 @@ The specs used for most of the labs in this repository are:
 - CPU: AMD Ryzen 5 3400G with Radeon Vega Graphics       3.70 GHz
 
 - Storage Space: 1TB SSD (Maximum Capacity)
+
+- Virtual Machines: Oracle VM VirtualBox
+
+- Host OS: Windows 10 Pro N
