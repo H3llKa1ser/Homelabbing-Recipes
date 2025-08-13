@@ -92,6 +92,8 @@ In our example, the firewall host has the domain:
 
     edgefw.homelab.lan
 
+<img width="1920" height="962" alt="image" src="https://github.com/user-attachments/assets/ac792a80-0396-4b32-8500-804dcd3fdc13" />
+
 #### 2) Enable HTTPS (if not already)
 
 Go to:
