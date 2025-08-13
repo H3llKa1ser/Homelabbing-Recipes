@@ -59,7 +59,7 @@ We set up a PfSense appliance as our gateway to the outside world (WAN) for our 
 
  - Enter vtnet3 (LAN)
 
-#### 6) Press option 2 to set interface(s) IP address (mostly to configure if we want DHCP enabled or assign static IP addresses.) In our case, we assign static IP addresses for our LAN.
+#### 6) Press option 2 to set interface(s) IP address (mostly to configure if we want DHCP enabled or assign static IP addresses.) In our case, we enable DHCP for all LANs except vtnet3 LAN.
 
 #### 7) Choose another VM to connect to our PfSense via LAN, and set these parameters on its network settings:
 
@@ -69,13 +69,15 @@ We set up a PfSense appliance as our gateway to the outside world (WAN) for our 
 
  - Wired Connection: Enabled
 
-#### 8) Boot our machine, then on the command line type these commands to assign it an IP address in the LAN network
+ - Adapter Type: Paravirtualized Network (virtio-net)
 
-    sudo ip addr add 192.168.10.2/24 dev eth1
+#### 8) Boot our machine, then check that an IP address was already assigned via DHCP with the command
 
-Then
+    ip a
 
-    sudo ip route add default via 192.168.10.1
+OR 
+
+    ifconfig
 
 Now we can access the PfSense web portal by browsing in
 
