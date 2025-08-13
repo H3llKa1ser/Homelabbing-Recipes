@@ -11,3 +11,5 @@
 ### 4) Wazuh or Splunk free (Security Information and Event Management (SIEM) and Endpoint Detection and Response (EDR) (1 server and multiple agents for centralized log collection and analysis))
 
 ### 5) Demo Web App (will check some out later, maybe we can use OWASP juice shop ONLY FOR DEMO)
+
+### 6) Kali/Parrot OS/Black Arch Linux Attacker VM
