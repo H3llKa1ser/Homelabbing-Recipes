@@ -70,6 +70,6 @@ OR if https is disabled
     
     http://192.168.10.1
 
-with default credentials:
+with default credentials (Change password upon login to something strong!):
 
     admin:pfsense
