@@ -61,6 +61,36 @@ We set up a PfSense appliance as our gateway to the outside world (WAN) for our 
 
 #### 6) Press option 2 to set interface(s) IP address (mostly to configure if we want DHCP enabled or assign static IP addresses.) In our case, we enable DHCP for all LANs except vtnet3 LAN.
 
+##### vtnet1
+
+ - Enter 2 to select “Set interface(s) IP address”. Enter 2 to select the LAN interface.
+
+ - Configure IPv4 address LAN interface via DHCP?: n
+
+ - Enter the new LAN IPv4 address: 10.0.0.1
+
+ - Enter the new LAN IPv4 subnet bit count: 24
+
+For the next question directly press Enter. Since this is a LAN interface we do not have to worry about configuring the upstream gateway.
+
+ - Configure IPv6 address LAN interface via DHCP6: n
+
+ - For the new LAN IPv6 address question press Enter
+
+ - Do you want to enable the DHCP server on LAN?: y
+
+ - Enter the start address of the IPv4 client address range: 10.0.0.11
+
+ - Enter the end address of the IPv4 client address range: 10.0.0.243
+
+ - Do you want to revert to HTTP as the webConfigurator protocol?: n
+
+##### For all other LANs we choose the same options. Change only the corresponding IP addresses to assign
+
+ - OPT1: 10.6.6.1 (Assigned IP), 10.6.6.11 (Start), 10.6.6.243 (End)
+
+ - OPT2: 10.80.80.1 (Assigned IP) (Do not enable DHCP)
+
 #### 7) Choose another VM to connect to our PfSense via LAN, and set these parameters on its network settings:
 
  - NIC: Internal Network (LAN)
