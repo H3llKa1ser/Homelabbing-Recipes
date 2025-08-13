@@ -81,12 +81,8 @@ OR
 
 Now we can access the PfSense web portal by browsing in
 
-    https://192.168.10.1 
+    https://10.0.0.1 
     
-OR if https is disabled 
-    
-    http://192.168.10.1
-
 with default credentials (Change password upon login to something strong!):
 
     admin:pfsense
