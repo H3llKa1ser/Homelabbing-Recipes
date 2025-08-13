@@ -37,13 +37,13 @@ We set up a PfSense appliance as our gateway to the outside world (WAN) for our 
 
 #### 3) Boot the machine, and then follow the installation instructions, then make these changes:
 
- - Choose em0 for the WAN interface
+ - Choose vtnet0 for the WAN interface
 
- - Choose em1 for the LAN interface
+ - Choose vtnet1 for the LAN interface
 
- - Choose em2 for the LAN 2 interface
+ - Choose vtnet2 for the LAN 2 interface
 
- - Choose em3 for the LAN 3 interface
+ - Choose vtnet3 for the LAN 3 interface
 
  - Partitioning: UFS
 
@@ -51,9 +51,13 @@ We set up a PfSense appliance as our gateway to the outside world (WAN) for our 
 
 #### 5) When we land on the PfSense shell menu, press option 1 to assign the network interfaces. PfSense should detect them.
  
- - Enter em0 (WAN)
+ - Enter vtnet0 (WAN)
 
- - Enter em1 (LAN)
+ - Enter vtnet1 (LAN)
+
+ - Enter vtnet2 (LAN)
+
+ - Enter vtnet3 (LAN)
 
 #### 6) Press option 2 to set interface(s) IP address (mostly to configure if we want DHCP enabled or assign static IP addresses.) In our case, we assign static IP addresses for our LAN.
 
