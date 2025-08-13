@@ -96,7 +96,7 @@ In our example, the firewall host has the domain:
 
 Go to:
 
-        System -> Advanced -> Admin Access
+    System -> Advanced -> Admin Access
 
 Then press the radio button HTTPS (SSL/TLS)
 
