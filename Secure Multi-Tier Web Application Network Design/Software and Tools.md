@@ -1,6 +1,6 @@
 # Software and Tools
 
-### 1) PfSense (Acts as a Switch and Firewall, protecting against Layer 4 attacks)
+### 1) PfSense (Acts as a Gateway and Firewall, protecting against Layer 4 attacks)
 
 ### 2) OpenVPN (VPN software for more segregated access)
 
