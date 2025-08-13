@@ -121,28 +121,30 @@ with default credentials (Change password upon login to something strong!):
 
 You can instead use the GUI to make changes on the PfSense device.
 
-#### 1) Make any changes on setup
+#### 1) Configuratiom
 
-You can go to: 
+Go to: 
 
     System -> Setup Wizard -> pfSense Setup
 
-if you want to make any additional changes.
-
-On step 2, you can give the firewall host a name. It can be anything. Then you can give it a domain name as well (we will configure DNS later).
+On step 2, you can give the firewall host a name. It can be anything. Then you can also give it a domain name \. It can be whichever you like if you identify the pfSense device within your network.
 
 In our example, the firewall host has the domain:
 
     edgefw.homelab.lan
 
-<img width="1920" height="962" alt="image" src="https://github.com/user-attachments/assets/ac792a80-0396-4b32-8500-804dcd3fdc13" />
+Uncheck Override DNS option, then next
 
-#### 2) Enable HTTPS (if not already)
+<img width="1917" height="940" alt="image" src="https://github.com/user-attachments/assets/3c175059-fa0a-4c75-b696-473d77487d1b" />
 
-Go to:
+On step 3, choose yout timezone, then next
 
-    System -> Advanced -> Admin Access
+On step 4, uncheck the "Block private networks from entering via WAN", then next
 
-Then press the radio button HTTPS (SSL/TLS)
+<img width="1144" height="255" alt="image" src="https://github.com/user-attachments/assets/1b50876e-b045-4f53-8d5e-0aca1de2b46f" />
 
-<img width="1919" height="959" alt="image" src="https://github.com/user-attachments/assets/decc3379-a6af-4fb6-92c7-6263198296ed" />
+On step 5, do not change enything, then next
+
+On step 6, change the admin password to something strong, then next.
+
+Click finish.
