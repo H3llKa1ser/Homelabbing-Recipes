@@ -22,11 +22,18 @@ We set up a PfSense appliance as our gateway to the outside world (WAN) for our 
 
 #### 3) Create 2 Network Interface Cards (NICs) for the VM
 
- - Adapter 1: Bridged Mode (WAN)
+ - Adapter 1: NAT (WAN)
 
  - Adapter 2: Internal Network (LAN) or Host-Only Network (in this case, we choose Internal Network and name it LabLAN, for example
 
- - Make sure that we have the option "wired connection" enabled in the advanced options of each NIC.
+ - Adapter 3: Internal Network (LAN) LabLAN 2
+
+ - Adapter 4: Internal Network (LAN) LabLAN 3
+
+ - Make sure that we have the option "wired connection" enabled in the advanced options of each NIC and all NICs use the Paravirtualized Network (virtio-net) Adapter Type.
+
+<img width="736" height="486" alt="image" src="https://github.com/user-attachments/assets/e0061115-5b18-4ab8-815d-f4673b3d4223" />
+
 
 #### 3) Boot the machine, and then follow the installation instructions, then make these changes:
 
