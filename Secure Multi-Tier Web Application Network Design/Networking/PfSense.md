@@ -41,6 +41,10 @@ We set up a PfSense appliance as our gateway to the outside world (WAN) for our 
 
  - Choose em1 for the LAN interface
 
+ - Choose em2 for the LAN 2 interface
+
+ - Choose em3 for the LAN 3 interface
+
  - Partitioning: UFS
 
 #### 4) Once installed, DO NOT FORGET TO UNMOUNT THE ISO from our VM, then reboot the machine.
