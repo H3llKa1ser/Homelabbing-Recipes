@@ -82,7 +82,7 @@ You can instead use the GUI to make changes on the PfSense device.
 
 You can go to: 
 
-        System -> Setup Wizard -> pfSense Setup
+    System -> Setup Wizard -> pfSense Setup
 
 if you want to make any additional changes.
 
@@ -90,7 +90,7 @@ On step 2, you can give the firewall host a name. It can be anything. Then you c
 
 In our example, the firewall host has the domain:
 
-        edgefw.homelab.lan
+    edgefw.homelab.lan
 
 #### 2) Enable HTTPS (if not already)
 
