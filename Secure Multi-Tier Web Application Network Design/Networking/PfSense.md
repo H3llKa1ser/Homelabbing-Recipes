@@ -66,10 +66,38 @@ Now we can access the PfSense web portal by browsing in
 
     https://192.168.10.1 
     
-OR if https is disabled
+OR if https is disabled 
     
     http://192.168.10.1
 
 with default credentials (Change password upon login to something strong!):
 
     admin:pfsense
+
+## PfSense Web Administration Panel
+
+You can instead use the GUI to make changes on the PfSense device.
+
+#### 1) Make any changes on setup
+
+You can go to: 
+
+        System -> Setup Wizard -> pfSense Setup
+
+if you want to make any additional changes.
+
+On step 2, you can give the firewall host a name. It can be anything. Then you can give it a domain name as well (we will configure DNS later).
+
+In our example, the firewall host has the domain:
+
+        edgefw.homelab.lan
+
+#### 2) Enable HTTPS (if not already)
+
+Go to:
+
+        System -> Advanced -> Admin Access
+
+Then press the radio button HTTPS (SSL/TLS)
+
+<img width="1919" height="959" alt="image" src="https://github.com/user-attachments/assets/decc3379-a6af-4fb6-92c7-6263198296ed" />
