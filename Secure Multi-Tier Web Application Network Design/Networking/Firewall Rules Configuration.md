@@ -45,3 +45,58 @@ Click Add, then enter the following:
 Click Save to create an Alias
 
 Then, click "Apply Changes"
+
+Now go to:
+
+    Firewall -> Rules
+
+And select the USERNETWORK tab
+
+Select the "Add rule to the end of the list" button
+
+Enter the following:
+
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: CYBER_RANGE subnets
+    Destination: CYBER_RANGE address
+    Description: Allow traffic to all devices on the USERNETWORK network
+
+Click Save
+
+Create another rule "Add rule to end"
+
+Enter the following
+
+    Protocol: Any
+    Source: USERNETWORK subnets
+    Destination: Address or Alias - 10.0.0.2
+    Description: Allow traffic to Attacker VM (Kali)
+
+Click Save
+
+Create another rule "Add rule to end"
+
+Enter the following
+
+    Protocol: Any
+    Source: CYBER_RANGE subnets
+    Destination: Address or Alias - RFC1918 (Select Invert match)
+    Description: Allow to any non-private IPv4 Address
+
+Click Save
+
+Create another rule "Add rule to end"
+
+    Action: Block
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: USERNETWORK subnets
+    Description: Block access to everything
+
+Click Save
+
+Final results
+
+<img width="1920" height="823" alt="image" src="https://github.com/user-attachments/assets/89a9173a-eae3-49ea-b179-26ab8d4c795c" />
+
