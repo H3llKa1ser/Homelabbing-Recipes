@@ -173,3 +173,37 @@ Go to:
 
     Services -> DNS Resolver
 
+Then, in General Settings, check these 3 options:
+
+<img width="1138" height="310" alt="image" src="https://github.com/user-attachments/assets/9381a797-1749-4d49-94a4-cf269f481ebe" />
+
+Go to Advanced Settings and check these 2 options:
+
+<img width="1137" height="185" alt="image" src="https://github.com/user-attachments/assets/15a42347-d0df-493b-be16-2087ce7bce61" />
+
+Then click "Save", then "Apply Changes" to take effect.
+
+#### 4) Disable DHCPv6
+
+Go to:
+
+    Interfaces -> WAN
+
+Then in IPv6 Configuration type, select None.
+
+After that, click "Save", then "Apply Changes" and proceed to reboot the PfSense VM
+
+#### 5) Advanced Configuration
+
+Go to 
+
+    System -> Advanced -> Networking
+
+Check this option
+
+<img width="1141" height="131" alt="image" src="https://github.com/user-attachments/assets/4422675a-da3b-4385-b445-7df5a6e7739a" />
+
+Then, click "Save", "Apply Changes", and click OK in the prompt for rebooting PfSense.
+
+After reboot, login again.
+
