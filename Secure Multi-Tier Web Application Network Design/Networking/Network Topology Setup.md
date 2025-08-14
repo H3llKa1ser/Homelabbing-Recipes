@@ -1,4 +1,4 @@
-# PfSense
+# Network Topology Setup - PfSense
 
 We set up a PfSense appliance as our gateway to the outside world (WAN) for our internal LAN, which also works as a Layer 4 firewall.
 
