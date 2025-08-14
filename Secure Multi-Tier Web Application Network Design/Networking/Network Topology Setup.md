@@ -121,7 +121,7 @@ with default credentials (Change password upon login to something strong!):
 
 You can instead use the GUI to make changes on the PfSense device.
 
-#### 1) Configuratiom
+#### 1) Setup Wizard
 
 Go to: 
 
@@ -133,18 +133,43 @@ In our example, the firewall host has the domain:
 
     edgefw.homelab.lan
 
-Uncheck Override DNS option, then next
+Uncheck the "Override DNS" option, then next
 
 <img width="1917" height="940" alt="image" src="https://github.com/user-attachments/assets/3c175059-fa0a-4c75-b696-473d77487d1b" />
 
-On step 3, choose yout timezone, then next
+On step 3, choose your timezone, then next
 
 On step 4, uncheck the "Block private networks from entering via WAN", then next
 
 <img width="1144" height="255" alt="image" src="https://github.com/user-attachments/assets/1b50876e-b045-4f53-8d5e-0aca1de2b46f" />
 
-On step 5, do not change enything, then next
+On step 5, do not change anything, then next
 
 On step 6, change the admin password to something strong, then next.
 
 Click finish.
+
+#### 2) Rename interfaces
+
+We will 
+
+Go to:
+
+    Interfaces -> LAN/OPT1/OPT2
+
+In the description name, enter the appropriate name for the interface for identification
+
+ - LAN: UserNetwork
+
+ - OPT1: DMZ
+
+ - OPT2: Security
+
+For each option, after clicking save, go to the top of the screen and click "Apply Changes"
+
+#### 3) DNS Resolver 
+
+Go to:
+
+    Services -> DNS Resolver
+
