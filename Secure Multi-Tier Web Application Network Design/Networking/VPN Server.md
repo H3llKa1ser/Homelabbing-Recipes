@@ -24,5 +24,5 @@ Login as root (enter your password)
 
 Update apt repository
 
-    apt update && apt full-upgrade
+    sudo apt update && sudo apt full-upgrade
 
