@@ -100,3 +100,12 @@ Final results
 
 <img width="1920" height="823" alt="image" src="https://github.com/user-attachments/assets/89a9173a-eae3-49ea-b179-26ab8d4c795c" />
 
+#### ) Reboot
+
+Go to
+
+    Diagnostics -> Reboot
+
+Click Submit
+
+Once pfSense boots up, you will be redirected to the login page
