@@ -18,9 +18,15 @@ Then, create a new VM in VirtualBox Manager and set the specs mentioned above.
 
 #### 2) Configuration
 
-Login as root (enter your password)
+Login as root (enter your password) OR run everything with sudo. If sudo is not installed, run as root:
 
     su root
+
+Then
+
+    apt install sudo
+
+    
 
 Update apt repository
 
