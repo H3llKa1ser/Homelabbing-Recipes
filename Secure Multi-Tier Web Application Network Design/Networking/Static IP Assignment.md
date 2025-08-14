@@ -2,7 +2,7 @@
 
 #### 1) Attacker VM
 
-Go to 
+In the PfSense administration portal, go to 
 
     Status -> DHCP Leases
 
