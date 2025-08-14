@@ -21,3 +21,8 @@ Then, create a new VM in VirtualBox Manager and set the specs mentioned above.
 Login as root (enter your password)
 
     su root
+
+Update apt repository
+
+    apt update && apt full-upgrade
+
