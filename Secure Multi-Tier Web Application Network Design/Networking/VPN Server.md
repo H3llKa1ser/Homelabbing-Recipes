@@ -25,10 +25,11 @@ Login as root (enter your password) OR run everything with sudo. If sudo is not 
 Then
 
     apt install sudo
-
-    
-
+   
 Update apt repository
 
     sudo apt update && sudo apt full-upgrade
 
+Add our created user to the sudo group to allow him to execute commands with elevated privileges (sudo)
+
+    usermod -aG sudo USER
