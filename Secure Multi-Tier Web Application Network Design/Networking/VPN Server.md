@@ -32,4 +32,16 @@ Update apt repository
 
 Add our created user to the sudo group to allow him to execute commands with elevated privileges (sudo)
 
-    usermod -aG sudo USER
+    sudo usermod -aG sudo USER
+
+Install GUI environment
+
+    sudo apt install task-mate-desktop -y
+
+Then 
+
+    sudo apt install lightdm -y
+
+ Reboot the system with this command
+
+    sudo systemctl reboot
