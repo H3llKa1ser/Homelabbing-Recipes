@@ -159,11 +159,11 @@ Go to:
 
 In the description name, enter the appropriate name for the interface for identification
 
- - LAN: UserNetwork
+ - LAN: LAN
 
- - OPT1: DMZ
+ - OPT1: CYBER_RANGE
 
- - OPT2: Security
+ - OPT2: AD_LAB
 
 For each option, after clicking save, go to the top of the screen and click "Apply Changes"
 
