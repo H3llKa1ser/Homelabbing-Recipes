@@ -21,11 +21,9 @@ Then, create a rule with these parameters:
 
 Scroll to the bottom and click on Save.
 
-<img width="1917" height="827" alt="image" src="https://github.com/user-attachments/assets/7865362b-506d-43ac-a671-d60b3e6c3891" />
-
 ### TIP: The order of the rules is important. If the order is not correct. Drag the rules around till it matches the above image.
 
-Before creating the rules for USERNETWORK, we need to create an Alias. 
+Before creating the rules for CYBER_RANGE, we need to create an Alias. 
 
 Go to:
 
@@ -50,7 +48,7 @@ Now go to:
 
     Firewall -> Rules
 
-And select the USERNETWORK tab
+And select the CYBER_RANGE tab
 
 Select the "Add rule to the end of the list" button
 
@@ -60,7 +58,7 @@ Enter the following:
     Protocol: Any
     Source: CYBER_RANGE subnets
     Destination: CYBER_RANGE address
-    Description: Allow traffic to all devices on the USERNETWORK network
+    Description: Allow traffic to all devices on the CYBER_RANGE network
 
 Click Save
 
@@ -69,7 +67,7 @@ Create another rule "Add rule to end"
 Enter the following
 
     Protocol: Any
-    Source: USERNETWORK subnets
+    Source: CYBER_RANGE subnets
     Destination: Address or Alias - 10.0.0.2
     Description: Allow traffic to Attacker VM (Kali)
 
@@ -91,14 +89,14 @@ Create another rule "Add rule to end"
     Action: Block
     Address Family: IPv4+IPv6
     Protocol: Any
-    Source: USERNETWORK subnets
+    Source: CYBER_RANGE subnets
     Description: Block access to everything
 
 Click Save
 
 Final results
 
-<img width="1920" height="823" alt="image" src="https://github.com/user-attachments/assets/89a9173a-eae3-49ea-b179-26ab8d4c795c" />
+<img width="1920" height="915" alt="image" src="https://github.com/user-attachments/assets/0769ae71-09d5-4be6-8236-03be0aa93585" />
 
 #### ) Reboot
 
