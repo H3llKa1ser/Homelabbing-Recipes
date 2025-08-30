@@ -103,8 +103,50 @@ Click Save, then apply changes.
 Final results
 
 <img width="1883" height="588" alt="image" src="https://github.com/user-attachments/assets/f88fbd2b-0700-4047-a255-0acb286fe575" />
+
+#### 3) Configure AD_LAB rules
+
+Create a rule with the following:
+
+    Action: Block
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: AD_LAB subnets
+    Destination: WAN subnets
+    Description: Block access to services on WAN interface
+
+Click Save
+
+Create another rule by clicking "Add rule to end"
+
+Rule details:
+
+    Action: Block
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: AD_LAB subnets    
+    Destination: CYBER_RANGE subnets
+    Description: Block traffic to CYBER_RANGE interface
+
+Click Save
+
+Create another "Add rule to end" rule with the following:
+
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: AD_LAB subnets
+    Description: Allow traffic to all other subnets and Internet
+
+Click Save, then Apply Changes
+
+Final result:
+
+<img width="1914" height="889" alt="image" src="https://github.com/user-attachments/assets/d7fc8e71-4b33-4398-ba3d-402fe0a70295" />
+
     
-#### ) Reboot
+#### 4) Reboot
+
+Restart PfSense to make our created firewall rules persistent.
 
 Go to
 
