@@ -98,6 +98,23 @@ Final results
 
 <img width="1920" height="915" alt="image" src="https://github.com/user-attachments/assets/0769ae71-09d5-4be6-8236-03be0aa93585" />
 
+#### 2) Configure LAN firewall rules
+
+Create a rule "Add rule to top"
+    
+    Action: Block
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: LAN subnets
+    Destination: WAN subnets
+    Description: Block access to services on WAN interface
+
+Click Save, then apply changes.
+
+Final results
+
+<img width="1883" height="588" alt="image" src="https://github.com/user-attachments/assets/f88fbd2b-0700-4047-a255-0acb286fe575" />
+    
 #### ) Reboot
 
 Go to
