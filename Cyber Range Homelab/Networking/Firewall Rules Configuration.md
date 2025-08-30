@@ -1,27 +1,12 @@
 # Firewall Rules Configuration
 
+### TIP: The order of the rules is important. If the order is not correct, drag the rules around till they match the images shown in this guide.
+
 #### 1) Configure CYBER_RANGE LAN rules
 
 In the PfSense administration portal, go to:
 
-    Firewall -> Rules -> USERNETWORK
-
-Click "Add rule to the top of the list"
-
-<img width="564" height="119" alt="image" src="https://github.com/user-attachments/assets/f304cc8b-0a13-4e64-9c2d-1acc912e5cfa" />
-
-Then, create a rule with these parameters:
-
-    Action: Block
-    Address Family: Ipv4+IPv6
-    Protocol: Any
-    Source: USERNETWORK subnets
-    Destination: WAN subnets
-    Description: Block access to services on WAN interface
-
-Scroll to the bottom and click on Save.
-
-### TIP: The order of the rules is important. If the order is not correct. Drag the rules around till it matches the above image.
+    Firewall -> Rules -> CYBER_RANGE
 
 Before creating the rules for CYBER_RANGE, we need to create an Alias. 
 
@@ -100,10 +85,14 @@ Final results
 
 #### 2) Configure LAN firewall rules
 
-Create a rule "Add rule to top"
-    
+Click "Add rule to the top of the list"
+
+<img width="564" height="119" alt="image" src="https://github.com/user-attachments/assets/f304cc8b-0a13-4e64-9c2d-1acc912e5cfa" />
+
+Then, create a rule with these parameters:
+
     Action: Block
-    Address Family: IPv4+IPv6
+    Address Family: Ipv4+IPv6
     Protocol: Any
     Source: LAN subnets
     Destination: WAN subnets
