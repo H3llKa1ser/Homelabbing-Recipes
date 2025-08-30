@@ -1,6 +1,6 @@
 # Firewall Rules Configuration
 
-#### 1) Configure UserNetwork LAN rules
+#### 1) Configure CYBER_RANGE LAN rules
 
 In the PfSense administration portal, go to:
 
