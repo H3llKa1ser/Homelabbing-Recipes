@@ -1,4 +1,4 @@
-This guide is heavily inspired from:
+This guide is heavily inspired by:
 
 1) https://blog.davidvarghese.net/
 
