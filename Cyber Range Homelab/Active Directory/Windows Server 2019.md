@@ -71,3 +71,51 @@ Wait for the installation (the VM will restart twice during installation)
 Once the installation is complete, we will be asked to set the password for the Administrator account. Set any password you like (remember this is a Cyber Range Home Lab).
 
 Click Finish.
+
+We won’t be able to log in by using the Ctrl+Alt+Delete shortcut. This will open the system settings menu of the host system.
+
+VirtualBox has a shortcut configured to perform this action. Use the shortcut Right Ctrl+Delete to access the login screen. Login as the Administrator in the VM.
+
+- Guest Additions Installation
+
+We need to install the VBOX Guest Additions to adjust the size of the VM screen.
+
+From the VM toolbar, click:
+
+    Devices -> Optical Drives -> Remove disk from virtual drive.
+
+Then select:
+
+    Devices -> Insert Guest Additions CD Image
+
+Now open the File Explorer. Once the disk is loaded, it will show up in the sidebar.
+
+Click on it, then Double-click on VBOXWindowsAdditions to start the installer.
+
+Click Next, Next, Install. Once installed, choose Reboot now, then Finish. The VM will restart.
+
+After restart, login again. Then click on
+
+    Devices -> Optical Drivers -> Remove disk from virtual drive
+
+to remove the Guest Additions image.
+
+From the VM toolbar, click:
+
+    View -> (Choose any view mode you wish)
+
+ - Network Configuration
+
+The AD_LAB interface has disabled DHCP, and because of this, we have to manually assign an IP address.
+
+From the taskbar, right-click on the network icon, and select
+
+    Open Network & Internet Settings
+
+Click on 
+
+    Change Adapter Options
+
+On the Network Connections page, we should see the Ethernet Adapter. Right-click on the adapter and select "Properties".
+
+
