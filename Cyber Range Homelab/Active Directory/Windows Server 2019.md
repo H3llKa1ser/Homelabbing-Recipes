@@ -76,7 +76,7 @@ We won’t be able to log in by using the Ctrl+Alt+Delete shortcut. This will op
 
 VirtualBox has a shortcut configured to perform this action. Use the shortcut Right Ctrl+Delete to access the login screen. Login as the Administrator in the VM.
 
-- Guest Additions Installation
+##### Guest Additions Installation
 
 We need to install the VBOX Guest Additions to adjust the size of the VM screen.
 
@@ -104,7 +104,7 @@ From the VM toolbar, click:
 
     View -> (Choose any view mode you wish)
 
- - Network Configuration
+##### Network Configuration
 
 The AD_LAB interface has disabled DHCP, and because of this, we have to manually assign an IP address.
 
@@ -118,4 +118,30 @@ Click on
 
 On the Network Connections page, we should see the Ethernet Adapter. Right-click on the adapter and select "Properties".
 
+Select:
+
+    Internet Protocol Version 4 (TCP/IPv4) -> Properties
+
+Enter the details below, click OK, then OK again.
+
+    IP Address: 10.80.80.2
+    Subnet Mask: 255.255.255.0
+    Default Gateway: 10.80.80.1
+    Preferred DNS Server: 10.80.80.2
+
+Windows will display a banner to allow internet access click on Yes.
+
+Close the Network Connections page.
+
+##### Renaming the System
+
+In the Settings app click on the Home button (above search bar).
+
+Select "System".
+
+Click on "About" on the sidebar and then click on the “Rename this PC” button. Give the PC an easy-to-remember name and then click on Next.
+
+Click on “Restart now” for the changes to take effect.
+
+##### Active Directory and DNS Installation
 
