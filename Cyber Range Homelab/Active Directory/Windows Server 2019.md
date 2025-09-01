@@ -26,6 +26,20 @@ Confirm all values are correct, then click Finish.
 
 Add the VM to a new group, then rename the group "Active Directory". After that, nest the "Active Directory" group under "Home Lab".
 
+Go to:
+
+    Settings -> System -> Motherboard
+
+In Boot Order, set Hard Disk on top, second Optical. Disable Floppy.
+
+Now go to:
+
+    Settings -> Network -> Adapter 1
+
+In the "Attached to" field, select:
+
+    Internal Network -> LabLAN 3
+
 #### 2) Server Setup
 
 Start the VM.
