@@ -38,7 +38,7 @@ Now go to:
 
 In the "Attached to" field, select:
 
-    Internal Network -> LabLAN 3
+    Internal Network -> LAN 2 (or in our case, LabLAN 3)
 
 #### 2) Server Setup
 
