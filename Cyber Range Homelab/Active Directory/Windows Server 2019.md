@@ -4,7 +4,7 @@ Download Link: https://www.microsoft.com/en-us/evalcenter/download-windows-serve
 
 ### TIP: Rename the downloaded .iso file OR create a separate folder with the name of the server to avoid confusion.
 
-#### 1) VM Creation
+### 1) VM Creation
 
 On the VirtualBox Manager, select:
 
@@ -40,7 +40,7 @@ In the "Attached to" field, select:
 
     Internal Network -> LAN 2 (or in our case, LabLAN 3)
 
-#### 2) Server Setup
+### 2) Server Setup
 
 Start the VM.
 
@@ -66,7 +66,7 @@ and then Click Next
 
 Wait for the installation (the VM will restart twice during installation)
 
-#### 3) Server Configuration
+### 3) Server Configuration
 
 Once the installation is complete, we will be asked to set the password for the Administrator account. Set any password you like (remember this is a Cyber Range Home Lab).
 
@@ -76,7 +76,7 @@ We won’t be able to log in by using the Ctrl+Alt+Delete shortcut. This will op
 
 VirtualBox has a shortcut configured to perform this action. Use the shortcut Right Ctrl+Delete to access the login screen. Login as the Administrator in the VM.
 
-##### Guest Additions Installation
+#### Guest Additions Installation
 
 We need to install the VBOX Guest Additions to adjust the size of the VM screen.
 
@@ -104,7 +104,7 @@ From the VM toolbar, click:
 
     View -> (Choose any view mode you wish)
 
-##### Network Configuration
+#### Network Configuration
 
 The AD_LAB interface has disabled DHCP, and because of this, we have to manually assign an IP address.
 
@@ -133,7 +133,7 @@ Windows will display a banner to allow internet access click on Yes.
 
 Close the Network Connections page.
 
-##### Renaming the System
+#### Renaming the System
 
 In the Settings app click on the Home button (above search bar).
 
@@ -143,5 +143,5 @@ Click on "About" on the sidebar and then click on the “Rename this PC” butto
 
 Click on “Restart now” for the changes to take effect.
 
-##### Active Directory and DNS Installation
+### 4) Active Directory and DNS Installation
 
