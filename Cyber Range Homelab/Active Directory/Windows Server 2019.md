@@ -145,3 +145,76 @@ Click on “Restart now” for the changes to take effect.
 
 ### 4) Active Directory and DNS Installation
 
+On the Server Manager, click on the "Manage" tab from the top right corner and select "Add Roles and Features".
+
+Click on Next until "Server Roles".
+
+Enable "Active Directory Domain Services" and "DNS Server".
+
+Click "Add Features" to confirm selection (This tab opens every time you enable a feature)
+
+Click Next until "Confirmation"
+
+Install. Once the installation is complete, exit the wizard.
+
+#### Active Directory Configuration
+
+Click on the Flag icon, then click on "Promote this server to a domain controller".
+
+The AD Domain Servers Configuration Wizard will open. For deployment operation select Add a new Forest. Give the domain a name.
+
+You can name your domain anything you like (the domain in this example shall be named adcyber.lab)
+
+Enter a password to use for using Directory Services Restore Mode (DSRM)
+
+Click Next
+
+The NetBIOS name should automatically be filled. It will be the first part of the domain name. Click on Next to continue.
+
+Next, Next, then Install to start the Domain Services setup.
+
+Once the install is complete the machine will reboot. CLick close to reboot.
+
+#### DNS Configuration
+
+Open Start Menu, then:
+
+    Windows Administrative Tools -> DNS
+
+Select the Domain Controller (The machine name you just gave a few steps back). Double-click on "Forwarders" to the right.
+
+Go to:
+
+    Forwarders -> Edit
+
+Enter the IP address of the AD_LAB interface (10.80.80.1), then Enter.
+
+Click OK, Apply then OK.
+
+### 5) DHCP Installation
+
+Click on Manage from the toolbar in Server Manager. Then choose “Add Roles and Features”.
+
+Keep clicking Next till you reach the “Server Roles” page. Enable “DHCP Server” then click on “Add Features”.
+
+Keep clicking Next till you reach the Confirmation page. Click Install to enable DHCP.
+
+#### DHCP Configuration
+
+After the installation is complete click on the Flag present in the toolbar of Server Manager and click on “Complete DHCP configuration”.
+
+Click on "Commit"
+
+Click "Close"
+
+Then from the Start Menu, go to:
+
+    Windows Administrative Tools -> DHCP
+
+Expand the DHCP server (dc1.adcyber.lab in our example)
+
+Right-click on "IPv4", then select "New Scope"
+
+
+
+
