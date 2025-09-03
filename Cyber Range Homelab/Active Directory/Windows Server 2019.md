@@ -234,5 +234,4 @@ In the IP address field enter the default gateway for the AD_LAB interface (10.8
 
 Next, Next, then "Yes, Iwant to activate this scope now", then Next.
 
-Now we have a fully functioning Domain Controller!!!
 
