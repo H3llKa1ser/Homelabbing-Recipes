@@ -215,6 +215,24 @@ Expand the DHCP server (dc1.adcyber.lab in our example)
 
 Right-click on "IPv4", then select "New Scope"
 
+Enter a Name and Description for the new scope.
 
+Enter the details below, then Next:
 
+    Start IP address: 10.80.80.11 (You can start with 10.80.80.3, but you may need some IPs for static assignment)
+    End IP address: 10.80.80.253
+    Length: 24
+    Subnet mask: 255.255.255.0
+
+Click Next
+
+Increase the lease time to 365 days, then Next
+
+Select “Yes, I want to configure these options now” and click on Next.
+
+In the IP address field enter the default gateway for the AD_LAB interface (10.80.80.1) and then click on Add. Once added click on Next.
+
+Next, Next, then "Yes, Iwant to activate this scope now", then Next.
+
+Now we have a fully functioning Domain Controller!!!
 
