@@ -232,6 +232,6 @@ Select “Yes, I want to configure these options now” and click on Next.
 
 In the IP address field enter the default gateway for the AD_LAB interface (10.80.80.1) and then click on Add. Once added click on Next.
 
-Next, Next, then "Yes, Iwant to activate this scope now", then Next.
+Next, Next, then "Yes, I want to activate this scope now", then Next.
 
 
