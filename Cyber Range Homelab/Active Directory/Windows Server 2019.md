@@ -234,4 +234,84 @@ In the IP address field enter the default gateway for the AD_LAB interface (10.8
 
 Next, Next, then "Yes, I want to activate this scope now", then Next.
 
+### 5) Domain Configuration
+
+#### Certificate Service Installation
+
+Select Manage from the top right corner of Server Manager and then select “Add Roles and Features”.
+
+Click Next till you reach the Server Roles page. Enable “Active Directory Certificate Services”.
+
+Click on Add Features.
+
+Click Next till you reach the Role Services Page. Enable “Certificate Authority”. Click on Next to continue.
+
+Click on Install to start the setup.
+
+After the installation is complete the server has to be restarted. Open the Start Menu, click on the Power icon and then select Restart.
+
+#### Certificate Service Configuration
+
+After the restart once Server Manager loads. Click on the Flag icon on the top right side and select “Configure Active Directory Certificate Services”
+
+Click Next
+
+Enable “Certification Authority” and click on Next.
+
+Click on Next till you reach the Confirmation page. Click on Configure to save the changes.
+
+Click Close
+
+### 6) User Configuration
+
+#### AD Admin
+
+Open the Start Menu, then:
+
+    Windows Administrative Tools -> Active Directory Users and Computers
+
+Right-click on the domain name in the sidebar. Then select 
+
+    New -> User.
+
+Enter the First Name, Last Name and User logon name for the new user. This user will be the Administrator for the Domain Controller.
+
+Enter the Password for the user. Uncheck all options leaving “Password never expires”. Click on Next to create the user.
+
+Expand the dropdown on the domain name from the sidebar. Click on Users. Then double-click on “Domain Admins”.
+
+Go to:
+
+    Members -> Add
+
+Enter the name of the user and check on Check Names.
+
+Click OK, Apply, then OK.
+
+Open the Start menu and then click on the user logo and then select Sign out.
+
+From the login screen select “Other user”. Then enter the login name and password that was configured for your domain administrator.
+
+#### AD User 1 
+
+Open the Start Menu, then:
+
+    Windows Administrative Tools -> Active Directory Users and Computers
+
+Right-click on the domain name from the sidebar. Select 
+
+    New -> User.
+
+Enter the details for the user.
+
+Give the user a password. Check the “User cannot change password” and “Password never expires” options. Click Next to create a user.
+
+#### AD User 2 
+
+Follow the EXACT same steps for the other user as well.
+
+
+
+
+
 
