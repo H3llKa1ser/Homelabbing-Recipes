@@ -66,6 +66,41 @@ Then follow the below:
     Enter the Optional 3 interface name: vtnet4
     Do you want to proceed?: y
 
+The new interface has been added. Now we need to assign the interface an IP address.
 
+Enter 2 (Set interface(s) IP address)
 
+Enter 5 to select the OPT3 interface
 
+Then follow the below:
+
+    Configure IPv4 address OPT3 interface via DHCP?: n
+    Enter the new OPT3 IPv4 address: 10.99.99.1
+    Enter the new OPT3 IPv4 subnet bit count: 24
+    Press Enter
+    Configure IPv6 address OPT3 interface via DHCP6: n
+    For the new OPT3 IPv6 address question press Enter.
+    Do you want to enable the DHCP server on OPT3?: y
+    Enter the start address of the IPv4 client address range: 10.99.99.11
+    Enter the end address of the IPv4 client address range: 10.99.99.243
+    Do you want to revert to HTTP as the webConfigurator protocol?: n
+
+Now interface OPT3 will have an IP address.
+
+Interface IP Address
+
+    10.99.99.1
+
+Subnet Mask (bit)
+
+    24
+
+Start-End of the IPv4 client address range
+
+    10.99.99.11 - 10.99.99.243
+
+DHCP Server enabled
+
+    yes
+
+## Renaming the Interface
