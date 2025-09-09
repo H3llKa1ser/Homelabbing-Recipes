@@ -104,3 +104,62 @@ DHCP Server enabled
     yes
 
 ## Renaming the Interface
+
+Start the Kali VM and browse to the PfSense administrative dashboard.
+
+Then select
+
+    Interfaces -> OPT3
+
+In the description field, enter
+
+    SECURITY
+
+Then click
+
+    Save -> Apply Changes
+
+## Interface Firewall Configuration
+
+Click on
+
+    Firewall -> Rules
+
+Select the SECURITY tab, then add these rules below:
+
+#### Rule 1
+
+    Action: Block
+    Address Family: IPv4+IPv6   
+    Protocol: Any
+    Source: SECURITY subnets
+    Destination: WAN subnets
+    Description: Block access to services on WAN interface
+
+#### Rule 2
+
+    Action: Block
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: SECURITY subnets
+    Destination: LAN subnets
+    Description: Block access to services on LAN
+
+#### Rule 3
+
+    Address Family: IPv4+IPv6
+    Protocol: Any
+    Source: SECURITY subnets
+    Description: Allow traffic to all subnets and Internet
+
+Final results
+
+<img width="1911" height="866" alt="image" src="https://github.com/user-attachments/assets/c10d1219-766d-46cb-a7d0-29e03831f8ea" />
+
+Apply Changes, then reboot pfSense
+
+Go to
+
+    Diagnostics -> Reboot -> Submit
+
+Once pfSense boots up you will be redirected to the login page.
