@@ -10,7 +10,7 @@ RAM: 8192MB (8GB)
 
 CPU: 2
 
-Disk Space: 50GB
+Disk Space: 50GB (You can choose a lot more if you actually want to simulate a SIEM lab. This is just a Proof-of-Concept about installing and configuring the tool only.)
 
 Network Adapters: 2 (Internal Network LabLAN4 and Bridged)
 
