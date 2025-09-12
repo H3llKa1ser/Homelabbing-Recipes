@@ -26,4 +26,9 @@ Once installed, browse to:
 
     https://<WAZUH_DASHBOARD_IP_ADDRESS>
 
-and insert the credentials printed from the installer (DO NOT FORGET TO COPY-PASTE!
+and insert the credentials printed from the installer (DO NOT FORGET TO COPY-PASTE!)
+
+Disable Wazuh repository to prevent further updates that may break our environment
+
+    sudo sed -i "s/^deb /#deb /" /etc/apt/sources.list.d/wazuh.list
+    sudo apt update
