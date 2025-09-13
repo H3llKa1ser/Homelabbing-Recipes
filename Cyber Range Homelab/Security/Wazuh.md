@@ -36,3 +36,8 @@ Disable Wazuh repository to prevent further updates that may break our environme
 Print all Wazuh user credentials
 
     sudo tar -O -xvf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
+
+## Wazuh Agent
+
+### Windows
+
