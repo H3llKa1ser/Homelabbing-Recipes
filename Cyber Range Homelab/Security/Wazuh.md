@@ -47,6 +47,8 @@ You can install a Windows Wazuh Agent on your Windows endpoint with these comman
 
     Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.12.0-1.msi -OutFile $env:tmp\wazuh-agent; msiexec.exe /i $env:tmp\wazuh-agent /q WAZUH_MANAGER='10.10.10.11' WAZUH_AGENT_NAME='DC01-ADCYBER' 
 
+The version might be different at the time of writing so beware!
+
 Change the WAZUH_MANAGER and WAZUH_AGENT_NAME values to your corresponding values.
 
 Then start the Wazuh service
