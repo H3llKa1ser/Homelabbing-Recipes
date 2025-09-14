@@ -86,3 +86,17 @@ In the text input, write 9997 for the Splunk server to listen on TCP port 9997 t
 #### Windows
 
 Download link: https://download.splunk.com/products/universalforwarder/releases/9.1.2/windows/splunkforwarder-9.1.2-b6b9c8185839-x64-release.msi
+
+Double-click on the .msi file to begin installation and follow the steps:
+
+1) Check the License Agreement box
+
+2) Provide a username and password for the Forwarder (TIP: Use the same credentials as you used for your central Splunk server)
+
+3) On Deployment server, enter the central Splunk server IP with port 8089. You can get the IP of your Splunk server in Ubuntu with the command:
+
+        ip a
+
+4) Again, enter the Splunk server IP with port 9997.
+
+5) Install, then Finish.
