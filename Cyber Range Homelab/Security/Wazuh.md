@@ -62,28 +62,3 @@ Example:
 <img width="1834" height="641" alt="image" src="https://github.com/user-attachments/assets/bb626826-8520-4fa0-818b-30e4204e044b" />
 
 TIP: You can deploy a new agent via the Wazuh dashboard as well by Clicking "Deploy new agent", then follow the instructions to generate the necessary commands to run on the target endpoint.
-
-TIP 2: If your agent cannot somehow connect with your Wazuh central, create 2 Firewall rules and put them above all other rules you have created in the AD_LAB interface (in this example)
-
-Firewall rule 1
-
-    Action: Allow
-    Address Family: IPv4
-    Protocol: TCP
-    Source: AD_LAB subnets
-    Port: 1515
-    Destination: WAZUH_CENTRAL_SERVER_IP
-    Port: 1515
-    Description: Allow Wazuh Agent Communication to Wazuh Central Server
-
-Firewall rule 2
-
-    Action: Allow
-    Address Family: IPv4
-    Protocol: TCP
-    Source: AD_LAB subnets
-    Port: 1514
-    Destination: WAZUH_CENTRAL_SERVER_IP
-    Port: 1514
-    Description: Allow Wazuh Agent Log Forwarding to Wazuh Central Server
-    
