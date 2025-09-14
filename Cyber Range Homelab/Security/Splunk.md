@@ -61,3 +61,23 @@ Run the following to allow Splunk to start automatically when the system is boot
 
     sudo /opt/splunk/bin/splunk enable boot-start
 
+### 3) Splunk Configuration
+
+Browse to 
+
+    http://127.0.0.1:8000
+
+and enter your admin credentials you used upon installing Splunk.
+
+Then go to:
+
+    Settings -> Forwarding and Receiving
+
+<img width="1841" height="868" alt="image" src="https://github.com/user-attachments/assets/ed0bc376-e6cd-4f45-b1e4-9dd7d1bede37" />
+
+In the "Receive data" section, click "Add new"
+
+<img width="1831" height="467" alt="image" src="https://github.com/user-attachments/assets/c96116d0-fe67-49fd-a998-955b882d3847" />
+
+In the text input, write 9997 for the Splunk server to listen on TCP port 9997 to receive data. then click Save
+
