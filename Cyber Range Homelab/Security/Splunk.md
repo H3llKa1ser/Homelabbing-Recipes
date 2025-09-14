@@ -81,3 +81,8 @@ In the "Receive data" section, click "Add new"
 
 In the text input, write 9997 for the Splunk server to listen on TCP port 9997 to receive data. then click Save
 
+### 4) Universal Forwarder (Splunk Agent)
+
+#### Windows
+
+Download link: https://download.splunk.com/products/universalforwarder/releases/9.1.2/windows/splunkforwarder-9.1.2-b6b9c8185839-x64-release.msi
