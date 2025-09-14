@@ -1,4 +1,4 @@
-# Wazuh SIEM
+# Wazuh SIEM/XDR
 
 Installation guide: https://documentation.wazuh.com/current/quickstart.html
 
@@ -62,3 +62,43 @@ Example:
 <img width="1834" height="641" alt="image" src="https://github.com/user-attachments/assets/bb626826-8520-4fa0-818b-30e4204e044b" />
 
 TIP: You can deploy a new agent via the Wazuh dashboard as well by Clicking "Deploy new agent", then follow the instructions to generate the necessary commands to run on the target endpoint.
+
+### Linux
+
+#### 1) Installation
+
+Run this command as root:
+
+    wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.12.0-1_amd64.deb && sudo WAZUH_MANAGER='10.10.10.11' WAZUH_AGENT_NAME='UBUNTU-TESTVM' dpkg -i ./wazuh-agent_4.12.0-1_amd64.deb
+
+Again, replace any values as necessary. Also, check the version.
+
+Then deploy your Wazuh agent
+
+    systemctl daemon-reload
+    systemctl enable wazuh-agent
+    systemctl start wazuh-agent
+
+Disable Wazuh updates
+
+    sed -i "s/^deb/#deb/" /etc/apt/sources.list.d/wazuh.list
+    apt-get update
+
+Results
+
+<img width="1841" height="716" alt="image" src="https://github.com/user-attachments/assets/2c171482-2e36-4371-a395-18ae4fc40cd7" />
+
+TIP: If you agents do not connect to your central server for some reason, check your firewall rules in PfSense! You might have to add some allow rules for them to connect to other VLANS if you have them separately!
+
+And just in case, you can enable traffic for the specific ports the agent uses on the host-based firewall on the central server!
+
+Commands:
+
+    sudo iptables -A INPUT -p tcp -s 192.168.10.0/24 --dport 1515 -j ACCEPT
+
+    sudo iptables -A INPUT -p tcp -s 192.168.10.0/24 --dport 1514 -j ACCEPT
+
+    sudo netfilter-persistent save
+
+
+
