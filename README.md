@@ -15,3 +15,5 @@ The specs used for most of the labs in this repository are:
 - Virtualization Technology: Oracle VM VirtualBox
 
 - Containerization Technology: Docker
+
+- Infrastructure as Code Technology: Terraform
