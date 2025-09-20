@@ -42,3 +42,14 @@ You have logged in. Now let us find all the subscriptions to which you have acce
 ### 3) Choose account subscription ID and set it in Azure CLI
 
     az account set --subscription "35akss-subscription-id"
+
+### 4) Create a Service Principal
+
+    az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>"
+
+### 5) Set your environment variables
+
+    $Env:ARM_CLIENT_ID = "<APPID_VALUE>"
+    $Env:ARM_CLIENT_SECRET = "<PASSWORD_VALUE>"
+    $Env:ARM_SUBSCRIPTION_ID = "<SUBSCRIPTION_ID>"
+    $Env:ARM_TENANT_ID = "<TENANT_VALUE>"
