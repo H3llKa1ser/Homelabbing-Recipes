@@ -39,3 +39,7 @@ Open your main.tf file. Update the azurerm_resource_group resource in your confi
 ### 5) Get updated list of resources in your workspace
 
     terraform state list
+
+### 6) Destroy (decommission) your infrastructure
+
+    terraform destroy
