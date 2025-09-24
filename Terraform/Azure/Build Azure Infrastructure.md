@@ -58,4 +58,6 @@ You have logged in. Now let us find all the subscriptions to which you have acce
 
     New-Item -Path "c:\" -Name "learn-terraform-azure" -ItemType "directory"
 
-### 7) Create a new file named main.tf (Configuration will be in the same folder as this one here.)
+### 7) Create a new file named main.tf (Configuration will be in the configs directory.)
+
+TIP: The location of your resource group is hardcoded in this example. If you do not have access to the resource group location westus2, update the main.tf file with your Azure region.
