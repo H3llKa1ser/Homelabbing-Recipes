@@ -19,3 +19,23 @@ To create a new Azure VNet, you have to specify the name of the resource group t
     terraform apply
 
 ### 3) Modify an existing resource
+
+Open your main.tf file. Update the azurerm_resource_group resource in your configuration by adding the tags block as shown below:
+
+
+      tags = {
+        Environment = "Terraform Getting Started"
+        Team = "DevOps"
+        }
+
+### 3) Apply changes
+
+    terraform apply
+
+### 4) Review updates to state
+
+    terraform show
+
+### 5) Get updated list of resources in your workspace
+
+    terraform state list
