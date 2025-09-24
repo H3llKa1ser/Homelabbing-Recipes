@@ -53,3 +53,9 @@ You have logged in. Now let us find all the subscriptions to which you have acce
     $Env:ARM_CLIENT_SECRET = "<PASSWORD_VALUE>"
     $Env:ARM_SUBSCRIPTION_ID = "<SUBSCRIPTION_ID>"
     $Env:ARM_TENANT_ID = "<TENANT_VALUE>"
+
+### 6) Create a directory for learning purposes
+
+    New-Item -Path "c:\" -Name "learn-terraform-azure" -ItemType "directory"
+
+### 7) Create a new file named main.tf (Configuration will be in the same folder as this one here.)
