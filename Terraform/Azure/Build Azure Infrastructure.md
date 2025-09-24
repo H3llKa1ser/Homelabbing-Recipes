@@ -61,3 +61,29 @@ You have logged in. Now let us find all the subscriptions to which you have acce
 ### 7) Create a new file named main.tf (Configuration will be in the configs directory.)
 
 TIP: The location of your resource group is hardcoded in this example. If you do not have access to the resource group location westus2, update the main.tf file with your Azure region.
+
+### 8) Initialize Terraform configuration (Run this where the main.tf file is located.)
+
+    terraform init
+
+### 9) Format configuration
+
+    terraform fmt
+
+### 10) Validate configuration
+
+    terraform validate
+
+### 11) Apply configuration
+
+    terraform apply
+
+Navigate to the Azure Portal to validate the resource created by Terraform.
+
+### 12) Inspect current state
+
+    terraform show
+
+### 13) Review the information in your state file
+
+    terraform state list
