@@ -48,3 +48,28 @@ Create a Service Principal with the same Subscription ID
     az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/SUBSCRIPTION_ID"
 
 Copy this output somewhere else
+
+### 5) Update the HCP Terraform environment variables
+
+Now that you have the authentication information for your account, navigate to the learn-terraform-azure workspace in the HCP Terraform UI.
+
+Find the Variables tab and create the below environment variables using the values you put into and got back from the last command. Set the ARM_CLIENT_SECRET as a sensitive value.
+
+| Environment Variable | AZ CLI Value                                             |
+|-----------------------|----------------------------------------------------------|
+| `ARM_SUBSCRIPTION_ID` | `SUBSCRIPTION_ID` from the last command's input.         |
+| `ARM_CLIENT_ID`       | `appID` from the last command's output.                  |
+| `ARM_CLIENT_SECRET`   | `password` from the last command's output. (**Sensitive**) |
+| `ARM_TENANT_ID`       | `tenant` from the last command's output.                 |
+
+Update and save these four environment variables. Set the ARM_CLIENT_SECRET as a sensitive value.
+
+### 6) Apply configuration
+
+    terraform apply
+
+Terraform is now storing your state remotely in HCP Terraform. Remote state storage makes collaboration easier and keeps state and secret information off your local disk. Remote state is loaded only in memory when it is used.
+
+### 7) Destroy Infrastructure
+
+    terraform destroy
