@@ -9,7 +9,12 @@ terraform {
 
   required_version = ">= 1.1.0"
 }
-
+cloud {
+    organization = "<ORG_NAME>"
+    workspaces {
+      name = "learn-terraform-azure"
+    }
+  }
 provider "azurerm" {
   features {}
 }
