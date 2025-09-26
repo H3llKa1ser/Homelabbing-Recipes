@@ -18,3 +18,7 @@ Example
 ### 2) Apply Changes
 
     terraform apply
+
+### 3) Destroy Infrastructure
+
+    terraform destroy
