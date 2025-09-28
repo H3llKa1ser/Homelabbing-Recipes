@@ -140,3 +140,48 @@ Next, create a new file named settings.management.tf with the following configur
         advanced = null
       }
     }
+
+This configuration defines a local value that the caf-enterprise-scale modules uses to configure the management resource settings including enabling log analytics and Azure Security Center.
+
+Now, apply
+
+    terraform apply
+
+Verify management resources by opening the Azure Portal's Management Group page.
+
+Under Platform, find and click the subscription in the "Management" management group.
+
+The deploy_management_resources argument enables log analytics and Azure Security Center for this subscription. Verify this subscription has Security Center by clicking Security from the left navigation menu.
+
+### 6) Deploy Connectivity resources
+
+Add the following configuration to the enterprise_scale module block in main.tf
+
+    # Configuration settings for connectivity resources.
+    # Uses default settings.
+    deploy_connectivity_resources = true
+    subscription_id_connectivity  = data.azurerm_client_config.connectivity.subscription_id
+
+Add subscription_id_connectivity = SUBSCRIPTION_ID to your terraform.tfvars file to deploy your connectivity resources in another subscription.
+
+This defines a new management group with default policies and access control (IAM) settings. In addition, it creates a centralized hub so your organization can connect with on-premise resources, secures the network with Azure Firewall, and centrally manages the DNS zones.
+
+Next, apply the configuration.
+
+    terraform apply
+
+Verify connectivity resources by opening the Azure Portal's Subscription page page and select your subscription. 
+
+https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade
+
+Then, click Resource groups on the left navigation menu.
+
+Filter the resource groups on tf-cafes.
+
+You should find a total of four resource groups. The connectivity submodule created the tf-cafes-connectivity-eastus and tf-cafe-dns resource groups for all the resources it provisioned.
+
+The tf-cafes-connectivity-eastus resource group contains a single virtual network named tf-cafes-hub-eastus. The caf-enterprise-scale module pre-configured the virtual network with subnets for GatewaySubnet and AzureFirewallSubnet. The DDos Protection Standard is disabled to save costs for this tutorial. Enable this in production environments. The tf-cafes-dns resource group creates all the DNS resources. Even though the resource group is in useast (as defined by the `default_location input value), the DNS resources are all global resources. By default, the module creates a private DNS Zone for all services and connects each private DNS zone to the virtual network.
+
+### 7) Clean up resources
+
+    terraform destroy
