@@ -1,5 +1,7 @@
 # Microsoft Cloud Adoption Framework enterprise-scale module
 
+Tutorial Link: https://developer.hashicorp.com/terraform/tutorials/azure/microsoft-caf-enterprise-scale
+
 ## Prerequisites
 
  - The Terraform 1.0.4+ CLI installed locally.
