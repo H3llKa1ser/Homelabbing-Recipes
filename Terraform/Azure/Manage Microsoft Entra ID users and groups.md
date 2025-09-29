@@ -50,5 +50,80 @@ Verify user creation
 
 ### 4) Create AD Groups and assign members
 
-Create a new file named groups.tf (file is inside the "Entra ID folder here"
+Create a new file named groups.tf (file is inside the "Entra ID" folder here)
 
+Apply
+
+    terraform apply
+
+Verify group creation and user assignment
+
+    az ad group list --query "[?contains(displayName,'Education')].{ name: displayName }" --output tsv
+
+List all the users in the Education department group
+
+    az ad group member list --group "Education Department" --query "[].{ name: displayName }" --output tsv
+
+List all users in the managers group
+
+    az ad group member list --group "Education - Managers" --query "[].{ name: displayName }" --output tsv
+
+List all users in the engineers group
+
+    az ad group member list --group "Education - Engineers" --query "[].{ name: displayName }" --output tsv
+
+### 5) Manage new users
+
+Add new users to your users.csv file in this format:
+
+    Dwight,Schrute,Education,Engineer
+    Phyllis,Vance,Education,Engineer
+    Kelly,Kapoor,Education,Customer Success
+
+Add a new group to the groups.tf file with the following configuration:
+
+    resource "azuread_group" "customer_success" {
+      display_name = "Education - Customer Success"
+      security_enabled = true
+    }
+
+    resource "azuread_group_member" "customer_success" {
+      for_each = { for u in azuread_user.users: u.mail_nickname => u if u.job_title == "Customer Success" }
+
+      group_object_id  = azuread_group.customer_success.id
+      member_object_id = each.value.id
+    }
+
+Create new users
+
+    terraform apply -target azuread_user.users
+
+Update group assignments
+
+    terraform apply
+
+### 6) Verify resource creation and user assignment
+
+Retrieve newly created users
+
+    az ad user list --filter "department eq 'Education'" --query "[].{ department: department, name: displayName, jobTitle: jobTitle, pname: userPrincipalName }"
+
+Verify the creation of the newly defined groups
+
+    az ad group list --query "[?contains(displayName,'Education')].{ name: displayName }" --output tsv
+
+List all the users in the Education department group
+
+    az ad group member list --group "Education Department" --query "[].{ name: displayName }" --output tsv
+
+List all the users in the engineers group
+
+    az ad group member list --group "Education - Engineers" --query "[].{ name: displayName }" --output tsv
+
+List all users in the customer success group
+
+    az ad group member list --group "Education - Customer Success" --query "[].{ name: displayName }" --output tsv
+
+### 7) Clean up
+
+    terraform destroy
