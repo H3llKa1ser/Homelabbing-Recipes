@@ -1,5 +1,7 @@
 # Manage Microsoft Entra ID users and groups
 
+Repo link: https://github.com/hashicorp-education/learn-terraform-azure-ad
+
 ## Prerequisites
 
 - The Terraform 1.0.4+ CLI installed locally.
