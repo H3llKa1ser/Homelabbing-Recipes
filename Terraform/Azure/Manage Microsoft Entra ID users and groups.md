@@ -24,3 +24,31 @@ Specify the tenant by setting the ARM_TENANT_ID environment variable to your pre
 
     export ARM_TENANT_ID=
 
+### 2) Review users.csv file
+
+In the users.csv file, add the users you want to add.
+
+### 3) Create AD users
+
+    terraform init
+
+Then, apply
+
+    terraform apply
+
+List all resources
+
+    terraform state list
+
+Retrieve a user's AD user information
+
+    terraform state show 'azuread_user.users["USERNAME"]'
+
+Verify user creation
+
+    az ad user list --filter "department eq 'DEPARTMENT_NAME'" --query "[].{ department: department, name: displayName, jobTitle: jobTitle, pname: userPrincipalName }"
+
+### 4) Create AD Groups and assign members
+
+Create a new file named groups.tf (file is inside the "Entra ID folder here"
+
