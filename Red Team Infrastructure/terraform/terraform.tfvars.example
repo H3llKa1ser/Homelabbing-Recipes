@@ -1,0 +1,5 @@
+engagement_name = "acme-rt-2026"
+aws_region      = "eu-central-1"
+operator_ip     = "203.0.113.10/32"       # YOUR public IP
+ssh_public_key  = "~/.ssh/redteam.pub"
+redirect_domain = "legitimate-looking.com" # Your domain
