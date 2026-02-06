@@ -1,0 +1,76 @@
+---
+# ──────────────────────────────────────────────
+# Redirector: HTTPS + DNS redirect to C2
+# ──────────────────────────────────────────────
+- name: Install Nginx and socat
+  apt:
+    name:
+      - nginx
+      - socat
+      - certbot
+      - python3-certbot-nginx
+      - iptables-persistent
+    state: present
+
+- name: Stop default Nginx (for certbot standalone if needed)
+  service:
+    name: nginx
+    state: stopped
+
+- name: Obtain Let's Encrypt certificate (standalone)
+  command: >
+    certbot certonly --standalone
+    --non-interactive --agree-tos
+    --email operator@{{ redirect_domain }}
+    -d {{ redirect_domain }}
+  args:
+    creates: /etc/letsencrypt/live/{{ redirect_domain }}/fullchain.pem
+  when: redirect_domain | length > 0
+
+- name: Deploy Nginx reverse proxy config
+  template:
+    src: nginx-redirect.conf.j2
+    dest: /etc/nginx/sites-available/redirector.conf
+    mode: "0644"
+  notify: restart nginx
+
+- name: Enable redirector site
+  file:
+    src: /etc/nginx/sites-available/redirector.conf
+    dest: /etc/nginx/sites-enabled/redirector.conf
+    state: link
+  notify: restart nginx
+
+- name: Remove default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: Deploy DNS redirect iptables rules
+  template:
+    src: iptables-dns.sh.j2
+    dest: /opt/dns-redirect.sh
+    mode: "0755"
+
+- name: Run DNS redirect script
+  command: /opt/dns-redirect.sh
+
+- name: Enable IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_set: true
+    reload: true
+
+- name: Start and enable Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+handlers:
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
