@@ -1,5 +1,8 @@
 # This is an example starting point. You can customize the files with your preferred C2 framework and web server URI paths to match your C2 malleable profile as you see fit!
 
+Cloud Provider: AWS
+C2 Framework: Sliver
+
 ## Project Structure
 
     red-team-infra/
