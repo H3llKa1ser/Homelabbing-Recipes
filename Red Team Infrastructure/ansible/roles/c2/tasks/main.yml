@@ -1,0 +1,89 @@
+---
+# ──────────────────────────────────────────────
+# C2 Server: Sliver C2 Framework (open-source)
+# ──────────────────────────────────────────────
+- name: Install C2 dependencies
+  apt:
+    name:
+      - build-essential
+      - mingw-w64
+      - net-tools
+      - screen
+    state: present
+
+- name: Create C2 directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0700"
+  loop:
+    - /opt/c2
+    - /opt/c2/logs
+    - /opt/c2/payloads
+    - /home/ubuntu/{{ engagement_name }}
+
+- name: Download Sliver C2 server
+  get_url:
+    url: https://github.com/BishopFox/sliver/releases/latest/download/sliver-server_linux
+    dest: /opt/c2/sliver-server
+    mode: "0755"
+  when: sliver_install | default(true)
+
+- name: Download Sliver C2 client
+  get_url:
+    url: https://github.com/BishopFox/sliver/releases/latest/download/sliver-client_linux
+    dest: /opt/c2/sliver-client
+    mode: "0755"
+  when: sliver_install | default(true)
+
+- name: Create Sliver systemd service
+  copy:
+    dest: /etc/systemd/system/sliver.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Sliver C2 Server
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=root
+      WorkingDirectory=/opt/c2
+      ExecStart=/opt/c2/sliver-server daemon
+      Restart=on-failure
+      RestartSec=10
+
+      [Install]
+      WantedBy=multi-user.target
+  notify: start sliver
+
+- name: Enable Sliver service
+  systemd:
+    name: sliver
+    enabled: true
+    daemon_reload: true
+
+- name: Configure UFW for C2
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  loop:
+    - { port: "443", proto: "tcp" }
+    - { port: "8080", proto: "tcp" }
+    - { port: "53", proto: "udp" }
+    - { port: "22", proto: "tcp" }
+    - { port: "31337", proto: "tcp" }   # Sliver multiplayer
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+
+handlers:
+  - name: start sliver
+    systemd:
+      name: sliver
+      state: started
+      daemon_reload: true
