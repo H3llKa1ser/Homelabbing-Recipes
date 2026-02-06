@@ -1,0 +1,62 @@
+---
+# ──────────────────────────────────────────────
+# Jumpbox: SSH Bastion / Operator Workstation
+# ──────────────────────────────────────────────
+- name: Install operator tools
+  apt:
+    name:
+      - nmap
+      - proxychains4
+      - socat
+      - screen
+      - python3-venv
+    state: present
+
+- name: Configure UFW - default deny incoming
+  ufw:
+    direction: incoming
+    policy: deny
+
+- name: Configure UFW - allow SSH
+  ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+
+- name: Create operator workspace directory
+  file:
+    path: "/home/ubuntu/{{ engagement_name }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0700"
+
+- name: Create SSH config for internal pivoting
+  copy:
+    dest: /home/ubuntu/.ssh/config
+    owner: ubuntu
+    group: ubuntu
+    mode: "0600"
+    content: |
+      Host redirector
+          HostName {{ hostvars[groups['redirectors'][0]]['inventory_hostname'] }}
+          User ubuntu
+          IdentityFile ~/.ssh/id_rsa
+
+      Host c2
+          HostName {{ hostvars[groups['c2_servers'][0]]['inventory_hostname'] }}
+          User ubuntu
+          IdentityFile ~/.ssh/id_rsa
+
+      Host phishing
+          HostName {{ hostvars[groups['phishing_servers'][0]]['inventory_hostname'] }}
+          User ubuntu
+          IdentityFile ~/.ssh/id_rsa
+
+      Host *
+          StrictHostKeyChecking no
+          UserKnownHostsFile /dev/null
