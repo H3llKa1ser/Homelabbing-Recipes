@@ -1,0 +1,34 @@
+---
+# ══════════════════════════════════════════════
+# Red Team Infrastructure Playbook
+# ══════════════════════════════════════════════
+
+- name: Apply common hardening to all hosts
+  hosts: all
+  become: true
+  roles:
+    - common
+
+- name: Configure Jumpbox
+  hosts: jumpbox
+  become: true
+  roles:
+    - jumpbox
+
+- name: Configure Redirector
+  hosts: redirectors
+  become: true
+  roles:
+    - redirector
+
+- name: Configure C2 Server
+  hosts: c2_servers
+  become: true
+  roles:
+    - c2
+
+- name: Configure Phishing Server
+  hosts: phishing_servers
+  become: true
+  roles:
+    - phishing
