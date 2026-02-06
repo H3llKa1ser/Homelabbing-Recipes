@@ -1,0 +1,105 @@
+---
+# ──────────────────────────────────────────────
+# Phishing: GoPhish
+# ──────────────────────────────────────────────
+- name: Install phishing dependencies
+  apt:
+    name:
+      - postfix
+      - certbot
+    state: present
+
+- name: Create GoPhish directory
+  file:
+    path: /opt/gophish
+    state: directory
+    mode: "0755"
+
+- name: Download GoPhish
+  unarchive:
+    src: "https://github.com/gophish/gophish/releases/download/v{{ gophish_version }}/gophish-v{{ gophish_version }}-linux-64bit.zip"
+    dest: /opt/gophish
+    remote_src: true
+
+- name: Set GoPhish binary permissions
+  file:
+    path: /opt/gophish/gophish
+    mode: "0755"
+
+- name: Configure GoPhish (listen on all interfaces)
+  lineinfile:
+    path: /opt/gophish/config.json
+    regexp: '"listen_url"'
+    line: '        "listen_url": "0.0.0.0:{{ gophish_admin_port }}",'
+
+- name: Configure GoPhish phishing server
+  lineinfile:
+    path: /opt/gophish/config.json
+    regexp: '"listen_url" *: *"0.0.0.0:80'
+    line: '        "listen_url": "0.0.0.0:80",'
+
+- name: Create GoPhish systemd service
+  copy:
+    dest: /etc/systemd/system/gophish.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=GoPhish Phishing Framework
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=root
+      WorkingDirectory=/opt/gophish
+      ExecStart=/opt/gophish/gophish
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+  notify: start gophish
+
+- name: Enable and start GoPhish
+  systemd:
+    name: gophish
+    enabled: true
+    daemon_reload: true
+    state: started
+
+- name: Configure Postfix as relay
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: "^myhostname", line: "myhostname = {{ redirect_domain }}" }
+    - { regexp: "^inet_interfaces", line: "inet_interfaces = all" }
+  notify: restart postfix
+
+- name: Configure UFW for phishing
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "22"
+    - "25"
+    - "80"
+    - "443"
+    - "{{ gophish_admin_port }}"
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+
+handlers:
+  - name: start gophish
+    systemd:
+      name: gophish
+      state: started
+      daemon_reload: true
+
+  - name: restart postfix
+    service:
+      name: postfix
+      state: restarted
