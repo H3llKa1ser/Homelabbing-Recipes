@@ -1,0 +1,21 @@
+---
+# ──────────────────────────────────────────────
+# Global Variables
+# ──────────────────────────────────────────────
+engagement_name: "acme-rt-2026"
+admin_username: "operatoradm"
+
+# Redirect / C2
+redirect_domain: "legitimate-looking.com"
+c2_listener_port: 8080
+c2_https_port: 443
+
+# GoPhish
+gophish_version: "0.12.1"
+gophish_admin_port: 3333
+
+# Sliver C2 (open-source)
+sliver_install: true
+
+# Hardening
+enable_fail2ban: true
