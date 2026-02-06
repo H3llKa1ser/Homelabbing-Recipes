@@ -1,0 +1,23 @@
+#!/bin/bash
+# ──────────────────────────────────────────────
+# DNS Redirect: Forward DNS to C2 server
+# ──────────────────────────────────────────────
+
+# Flush existing NAT rules
+iptables -t nat -F
+
+# Forward inbound DNS (UDP 53) to C2
+iptables -t nat -A PREROUTING -p udp --dport 53 \
+  -j DNAT --to-destination {{ c2_internal_ip }}:53
+
+# Forward inbound DNS (TCP 53) to C2
+iptables -t nat -A PREROUTING -p tcp --dport 53 \
+  -j DNAT --to-destination {{ c2_internal_ip }}:53
+
+# Masquerade
+iptables -t nat -A POSTROUTING -j MASQUERADE
+
+# Persist
+netfilter-persistent save
+
+echo "[+] DNS redirect rules applied → {{ c2_internal_ip }}:53"
