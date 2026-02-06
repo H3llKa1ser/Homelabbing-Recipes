@@ -16,4 +16,4 @@ The specs used for most of the labs in this repository are:
 
 - Containerization Technology: Docker
 
-- Infrastructure as Code Technology: Terraform
+- Infrastructure as Code Technology: Terraform , Ansible
