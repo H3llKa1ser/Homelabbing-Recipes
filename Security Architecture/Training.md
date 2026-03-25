@@ -321,3 +321,40 @@ Step 6 → Udemy Practice Tests (mock exams ~$10–$15)
 - 🎯 **Target 80%+ in mock exams** before booking the real thing — the pass mark is 55% for Foundation and 60% for Practitioner, so 80% in mocks gives you a solid buffer
 
 > 🚀 **You can be fully exam-ready for TOGAF in 3 months spending little to nothing.** The standard is free, the tools are free, and YouTube is free. The only thing required is your time and consistency.
+
+    I am a security professional with 3.5 years of experience across roles as a Security Analyst, Security Engineer, and Security Specialist. I need help positioning myself for a Security Architect role. Here is my full experience profile:
+    
+    Domain Experience:
+    
+    Cloud security architecture projects
+    Network security architecture projects
+    Application security architecture projects
+    IAM architecture — SSO, MFA, PAM, SAML, Entra ID
+    Led and facilitated the rollout of phishing-resistant MFA on privileged accounts using FIDO2 hardware keys
+    Frameworks & Methodologies:
+    
+    NIST CSF — operational experience
+    ISO 27001 — operational experience
+    MITRE ATT&CK — used hands-on for threat mapping as an analyst
+    Zero Trust principles — applied in practice via FIDO2 deployment
+    Soft Skills:
+    
+    Stakeholder management experience
+    Involvement in architecture projects at design level
+    Role progression showing consistent growth
+    Mentoring experience as a volunteer — demonstrating leadership and knowledge sharing
+    Certifications:
+    
+    CompTIA Security+
+    AZ-500 (Microsoft Azure Security Engineer)
+    AZ-900 (Microsoft Azure Fundamentals)
+    SSCP (ISC2)
+    Penetration testing certifications (x2)
+    Known Gaps:
+    
+    Data Security architecture (DLP, data classification, encryption design)
+    No formal Security Architect title yet
+    Years of experience below typical architect requirements
+    CISSP not yet achieved — actively considering pursuing it
+    Based on this profile, please help me with [INSERT YOUR REQUEST HERE] — for example: rewriting my CV, crafting a LinkedIn profile, preparing for architect interviews, building a study plan for CISSP, or identifying roles to target. 
+    
