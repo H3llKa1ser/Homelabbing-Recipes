@@ -26,6 +26,14 @@ Record findings, then map each one to OWASP Top 10 for LLMs
 
 https://owasp.org/www-project-top-10-for-large-language-model-applications/
 
+Map adversary techniques to MITRE ATLAS
+
+https://atlas.mitre.org/matrices/ATLAS
+
+Manage risk using NIST AI RMF
+
+https://www.nist.gov/itl/ai-risk-management-framework
+
 ## Defence in Depth proper implementation high-level example
 
 <img width="1800" height="979" alt="image" src="https://github.com/user-attachments/assets/2b80128e-eaef-4b45-abac-549c28c15a5d" />
