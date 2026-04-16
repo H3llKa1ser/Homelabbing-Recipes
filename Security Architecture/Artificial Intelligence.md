@@ -1,6 +1,6 @@
 # Artificial Intelligence
 
-## Assessing LLMs on the earliest phase using prompts
+## Assessing LLMs to uncover security gaps they introduced upon deployment
 
 ### 1) Capabilities
 
