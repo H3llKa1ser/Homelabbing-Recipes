@@ -76,3 +76,24 @@ Status
 
     sudo systemctl status kibana
 
+### 5) Final steps
+
+Browse to
+
+    http://localhost:5601/
+
+Create an enrollment token, then enter the generated codes in your browser
+
+    /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+
+Create a verification code
+
+    /usr/share/kibana/bin/kibana-verification-code
+
+Now head back to the browser, then follow the instructions so that it can set it up.
+
+If you missed the password during the Elasticsearch installation or need to reset it, use the command below to generate a new password
+
+    /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic
+
+Login, then enjoy access!
