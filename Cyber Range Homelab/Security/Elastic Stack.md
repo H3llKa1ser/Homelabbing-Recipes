@@ -206,3 +206,22 @@ In the Create pipeline flyout menu:
 
 3) Click Add a processor
 
+### 2) Add processors
+
+Processors define the actions Elasticsearch takes on an event as it is ingested. The Grok processor extracts multiple fields from the raw message field by matching specific parts of each log entry. The Date processor converts our event.time_string field into the native @timestamp field. Now add these processors:
+
+#### 1. Grok
+
+    Field: message
+    Pattern: %{TIMESTAMP_ISO8601:event.time_string} %{WORD:event.action} %{USER:user.name} %{IP:source.ip} %{IP:vpn.client.ip} %{NOTSPACE:vpn.server.region}
+
+#### 2. Date
+
+    Field: event.time_string
+    Formats: ISO8601
+    Target field: @timestamp
+
+After adding both processors, we should see them in the Create pipeline home screen:
+
+Click Create pipeline
+
