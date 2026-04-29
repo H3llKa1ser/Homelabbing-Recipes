@@ -182,7 +182,7 @@ Next, we will ensure that the integration is being applied to the correct Agent 
 
 ## Custom Log Types
 
-### 1) Build an Ingets Pipeline
+### 1) Build an Ingest Pipeline
 
 Ingest pipelines allow us to process incoming events before they are indexed, enabling us to extract structured fields from raw log data. 
 
