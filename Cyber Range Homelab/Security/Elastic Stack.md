@@ -179,3 +179,30 @@ Next, we will ensure that the integration is being applied to the correct Agent 
 4) Click Save and Continue
 
 5) Click Save and deploy changes
+
+## Custom Log Types
+
+### 1) Build an Ingets Pipeline
+
+Ingest pipelines allow us to process incoming events before they are indexed, enabling us to extract structured fields from raw log data. 
+
+Steps:
+
+From the Kibana menu:
+
+1) Scroll down to Management
+
+2) Select Stack Management
+
+3) Select Ingest Pipelines
+
+4) Click Create pipeline → New pipeline
+
+In the Create pipeline flyout menu:
+
+1) Name your pipeline vpn.logs.pipeline
+
+2) Give a short description
+
+3) Click Add a processor
+
