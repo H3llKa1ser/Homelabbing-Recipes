@@ -135,3 +135,14 @@ Now go back to Kibana after successful installation, go to:
 ### 3) Agent Policies and Integrations
 
 Agent policies allow you to define what data an Elastic Agent collects and how it behaves. Each policy is applied to enrolled agents and ensures consistent data collection across hosts. Policies are composed of integrations, which define what data is collected and how it is processed. 
+
+### 4) Confirm Log Ingestion
+
+1) From the Kibana menu in the top-left corner, select Discover
+
+2) Select the logs-* Data view in the top left to view incoming logs from your VM
+
+3) From here, we can investigate interesting fields associated with our logs
+
+4) View our incoming logs
+
