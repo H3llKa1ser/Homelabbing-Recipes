@@ -146,3 +146,36 @@ Agent policies allow you to define what data an Elastic Agent collects and how i
 
 4) View our incoming logs
 
+## Elastic Integrations
+
+### 1) Example: Apache HTTP Server logs
+
+Integrate logs from various sources in the example steps below:
+
+1) Click the Kibana menu in the top left
+
+2) Scroll down to Management
+
+3) Select Integrations
+
+4) Access the Integrations home page
+
+Then, do the following:
+
+1) Search Apache HTTP Server
+
+2) Select the integration
+
+3) Click Add Apache HTTP Server
+
+Next, we will ensure that the integration is being applied to the correct Agent policy:
+
+1) Keep the default name
+
+2) Select Existing hosts
+
+3) Ensure the Fleet Server Policy is selected
+
+4) Click Save and Continue
+
+5) Click Save and deploy changes
