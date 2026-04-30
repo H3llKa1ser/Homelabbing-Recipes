@@ -116,7 +116,7 @@ In the Add a Fleet Server flyout, let's fill in the details of our server:
 
 1) Enter the name fleet-server
 
-2) Enter your virtual machine IP as the URL https://10.113.148.175:8220
+2) Enter your virtual machine IP as the URL https://ELASTIC_SEARCH_IP:8220
 
 4) Click Generate Fleet Server policy
 
