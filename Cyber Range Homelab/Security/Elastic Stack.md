@@ -275,5 +275,50 @@ To confirm that we have correctly configured the integration and our ingest pipe
 
 4) Click Save 
 
-5) Give your Discover session the name VPN Logs and a description, then save, as we will use it in the next task
+5) Give your Discover session the name VPN Logs and a description, then save as we will use this to create a dashboard
 
+## Dashboards and Visualizations
+
+### 1) Create dashboard
+
+In the Kibana sidebar menu, go to:
+
+1) Select Dashboards
+
+2) Create dashboard
+
+3) Select Add from library in the top right or at the bottom of the page
+
+4) Search for and select the saved search, VPN Logs, from the previous task
+
+### 2) Add visualizations
+
+On the top right, click Add then Visualization. Let's focus on the event.action field for example
+
+1) Enter the query event.module: "filestream"
+
+2) Set the time to Last 24 hours
+
+3) Change the chart type to Pie
+
+4) Drag or select the event.action field for Slice by
+
+5) Set the Metric to Count
+
+#### Enhanced Visualizations
+
+What if we want a more detailed look? Perhaps we want to see the connections as they occurred over time. Let's make some changes to our current visualization:
+
+1) Change the graph type to Line
+
+2) Horizontal axis to @timestamp
+
+3) Keep the Vertical axis the same
+
+4) Set the Breakdown to event.action
+
+5) Now we can view the total for each event.action for a given 30-minute time period
+
+6) Go ahead and click Save and return in the top right corner.
+
+Kibana dashboards are fully modular, allowing analysts to drag and drop searches and visualizations into layouts that best support investigation and monitoring.
