@@ -450,9 +450,7 @@ When you open the Analyzer graph, Elastic automatically centers the view on the 
 
 4) Further child processes
 
-## Detection Rules
-
-### 1) Manage detection rules
+### 4) Detection Rules
 
 1) Using the Kibana menu, head to Security
 
