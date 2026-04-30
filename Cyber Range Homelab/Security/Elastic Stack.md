@@ -391,3 +391,62 @@ Lastly, using the Kibana menu in the top left.
 
 3) Investigate the event.category field to verify we have data coming in from our three types of monitored activity: file, network, and process
 
+## Alert Creation
+
+Detection rules pre-built by Elastic: https://www.elastic.co/docs/reference/security/prebuilt-rules#endpoint
+
+### 1) Alerts in Discover
+
+Let's head back to Discover, but this time we will use the Security solution alerts data view to investigate the alert.
+
+1) Select the Security solution alerts data view
+
+2) Build a table with the following fields:
+
+        kibana.alert.rule.name
+        kibana.alert.severity
+        event.action
+        file.path
+        file.name
+        user.name
+
+3) Investigate the alert
+
+### 2) Alerts Dashboard
+
+Using the Kibana menu, head to the Security section and select Alerts. We can now view a summary of our alert, including: 
+
+1) The severity level
+
+2) The name of the alert
+
+3) The host on which it triggered
+
+4) A table containing an overview of alerts
+
+Let's expand the malware alert by clicking the View details button.
+
+From the flyout panel, we have a wealth of information available, including descriptions of the triggered rule, relevant fields, and even suggested response actions.
+
+1) The Overview section
+
+2) Rule description and Alert reason
+
+3) Highlighted important fields
+
+4) The Table section, which includes all fields associated with the alert. In the table section, you can pin important fields for your investigation
+
+### 3) Event Analysis
+
+Select the Analyze event option from the malware alert in the Alerts dashboard.
+
+When you open the Analyzer graph, Elastic automatically centers the view on the event that triggered the alert, making it your anchor point for investigation. From there, Elastic reconstructs the surrounding activity into a visual process tree, helping you understand how the behavior unfolded. Depending on what commands you have executed in your session, your process tree may look slightly different, but in the example below, you can see:
+
+1) The parent process
+
+2) The process that triggered the alert
+
+3) The child process
+
+4) Further child processes
+
