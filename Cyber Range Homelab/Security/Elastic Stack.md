@@ -464,3 +464,27 @@ From here, we can see a list of our installed rules, including Elastic Defend's 
 
 On the next screen, you can search and enable any rules you like based on your specific needs.
 
+## Logstash
+
+### 1) Download
+
+https://www.elastic.co/downloads/logstash
+
+### 2) Installation
+
+Install
+
+    sudo dpkg -i logstash.deb
+
+Start
+
+    sudo systemctl start logstash
+
+Enable
+
+    sudo systemctl enable logstash
+
+Status
+
+    sudo systemctl status logstash
+
