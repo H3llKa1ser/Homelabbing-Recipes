@@ -322,3 +322,8 @@ What if we want a more detailed look? Perhaps we want to see the connections as 
 6) Go ahead and click Save and return in the top right corner.
 
 Kibana dashboards are fully modular, allowing analysts to drag and drop searches and visualizations into layouts that best support investigation and monitoring.
+
+## Elastic Defend
+
+### 1) Configuration
+
