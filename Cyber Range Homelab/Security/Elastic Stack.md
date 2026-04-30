@@ -488,3 +488,10 @@ Status
 
     sudo systemctl status logstash
 
+### 3) Configuration
+
+Logstash Plugins: https://www.elastic.co/docs/reference/logstash/plugins
+
+#### Input Plugins -> Filter Plugins -> Output Plugins
+
+
