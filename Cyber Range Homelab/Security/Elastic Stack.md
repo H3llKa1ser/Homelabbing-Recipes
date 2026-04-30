@@ -391,11 +391,11 @@ Lastly, using the Kibana menu in the top left.
 
 3) Investigate the event.category field to verify we have data coming in from our three types of monitored activity: file, network, and process
 
-## Alert Creation
+### 3) Alert Creation
 
 Detection rules pre-built by Elastic: https://www.elastic.co/docs/reference/security/prebuilt-rules#endpoint
 
-### 1) Alerts in Discover
+#### - Alerts in Discover
 
 Let's head back to Discover, but this time we will use the Security solution alerts data view to investigate the alert.
 
@@ -412,7 +412,7 @@ Let's head back to Discover, but this time we will use the Security solution ale
 
 3) Investigate the alert
 
-### 2) Alerts Dashboard
+### - Alerts Dashboard
 
 Using the Kibana menu, head to the Security section and select Alerts. We can now view a summary of our alert, including: 
 
@@ -436,7 +436,7 @@ From the flyout panel, we have a wealth of information available, including desc
 
 4) The Table section, which includes all fields associated with the alert. In the table section, you can pin important fields for your investigation
 
-### 3) Event Analysis
+### 4) Event Analysis
 
 Select the Analyze event option from the malware alert in the Alerts dashboard.
 
@@ -450,7 +450,7 @@ When you open the Analyzer graph, Elastic automatically centers the view on the 
 
 4) Further child processes
 
-### 4) Detection Rules
+### 5) Detection Rules
 
 1) Using the Kibana menu, head to Security
 
