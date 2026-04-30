@@ -327,3 +327,41 @@ Kibana dashboards are fully modular, allowing analysts to drag and drop searches
 
 ### 1) Configuration
 
+Docs: https://www.elastic.co/docs/solutions/security/configure-elastic-defend/install-elastic-defend
+
+Steps:
+
+1) Select the Kibana menu in the top left
+
+2) Scroll down to Management
+
+3) Select Integrations
+
+4) Click Installed integrations
+
+5) Locate Elastic Defend
+
+6) Click View 1 policies
+
+Now we will get a closer look at the configurations available for Elastic Defend.
+
+Click the integration policy defend-integration (already added with the button +Add Elastic Defend)
+
+If you head to the Malware section, you can toggle the feature on or off and set the protection level. 
+
+#### 1) Detect: 
+
+Elastic monitors, an alert is generated if malicious activity is detected, but nothing is blocked
+
+#### 2) Prevent: 
+
+Elastic monitors, an alert is generated if malicious activity is detected, and Elastic Defend takes action by quarantining, blocking, or terminating processes
+
+Lastly, head down to the Event Collection Linux and Session data sections. By default, Elastic Defend will collect file, network, and process data. Collecting session data allows us to track process trees and reconstruct full attack chains during investigations, which we will explore later. Select the two options below and save.
+
+#### - Collect session data
+
+#### - Capture terminal output
+
+### 2) Build an Elastic Defend Data View
+
