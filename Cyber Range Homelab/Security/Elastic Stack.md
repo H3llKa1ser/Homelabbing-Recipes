@@ -494,4 +494,112 @@ Logstash Plugins: https://www.elastic.co/docs/reference/logstash/plugins
 
 #### Input Plugins -> Filter Plugins -> Output Plugins
 
+Configuration files location:
+
+    /etc/logstash/conf.d/
+
+#### Examples
+
+configname.conf file example contents using example plugins:
+
+    input {
+     tcp {
+       port => 5456
+     }
+    }
+    
+    filter {
+     json {
+       source => "message"
+     }
+    }
+    
+    output {
+     elasticsearch {
+       hosts => ["localhost:9200"]
+       index => "your_index_name"
+     }
+    }
+
+
+auth.conf example file
+
+    input {
+     file {
+       path => "/var/log/auth.log"
+       start_position => "beginning"
+       sincedb_path => "/dev/null"
+     }
+    }
+    
+    filter {
+     grok {
+       match => {
+         "message" => "^%{TIMESTAMP_ISO8601:timestamp} %{NOTSPACE:[host][name]} %{WORD:program}(?:\[%{NUMBER:pid}\])?: %{GREEDYDATA:msg}"
+       }
+     }
+     date {
+       match => ["timestamp", "ISO8601"]
+       target => "@timestamp"
+     }
+    }
+    
+    output {
+     elasticsearch {
+       hosts => ["https://localhost:9200"]
+       user => "elastic"
+       password => "pn00IuML9u43_yKb688y"
+       index => "auth-logs-%{+YYYY.MM.dd}"
+       ssl_verification_mode => "none"
+       ssl_enabled => true
+     }
+    }
+
+Set permissions and restart Logstash
+
+Permissions
+
+    sudo usermod -aG adm logstash
+
+Restart
+
+    sudo systemctl restart logstash
+
+Status
+
+    sudo systemctl status logstash
+
+### 4) Log Data Visualization
+
+In Kibana, go to:
+
+1) Click the Kibana menu
+
+2) Scroll down to Management
+
+3) Select Stack Management
+
+4) Click Data Views under Kibana
+
+5) Choose Create data view
+
+Next, we will name our data view and select the index pattern.
+
+1) Name your data view Linux Authentication Logs (example)
+
+2) Enter auth-logs-* to match the index pattern we set up in the configuration
+
+3) Select Save data view to Kibana
+
+Lastly, lets head to Kibana Discover to confirm our configuration file is set up properly and view our incoming log data. 
+
+1) Select the Kibana menu
+
+2) Click Discover
+
+3) Select your Linux Authentication Logs data view
+
+4) View your available fields
+
+5) Inspect your incoming event data
 
