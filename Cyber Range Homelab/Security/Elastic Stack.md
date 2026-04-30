@@ -450,3 +450,19 @@ When you open the Analyzer graph, Elastic automatically centers the view on the 
 
 4) Further child processes
 
+## Detection Rules
+
+### 1) Manage detection rules
+
+1) Using the Kibana menu, head to Security
+
+2) Select Rules
+
+3) Click Detection rules (SIEM)
+
+From here, we can see a list of our installed rules, including Elastic Defend's native rule list and two pre-added rules.
+
+- Click + Add Elastic rules to view Elastic's extensive rule list.
+
+On the next screen, you can search and enable any rules you like based on your specific needs.
+
