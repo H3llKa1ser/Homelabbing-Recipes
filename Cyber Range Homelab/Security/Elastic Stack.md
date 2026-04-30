@@ -365,3 +365,29 @@ Lastly, head down to the Event Collection Linux and Session data sections. By de
 
 ### 2) Build an Elastic Defend Data View
 
+To focus only on the events monitored by Elastic Defend, we'll create a custom Data View in Kibana. Let's head to the Kibana menu to get started.
+
+1) Scroll down to Stack Management
+
+2) Select Data Views in the Kibana section
+
+3) Choose Create data view
+
+In the Create data view flyout panel.
+
+1) Give your data view a name Defend Data
+
+2) Enter the Index pattern logs-endpoint.events*, which covers file, network, and process events
+
+3) Click Save data view to Kibana
+
+After saving the data view, let's Set as default.
+
+Lastly, using the Kibana menu in the top left.
+
+1) Select Discover
+
+2) Ensure your newly made Data view is active
+
+3) Investigate the event.category field to verify we have data coming in from our three types of monitored activity: file, network, and process
+
