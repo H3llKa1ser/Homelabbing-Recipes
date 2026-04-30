@@ -225,3 +225,55 @@ After adding both processors, we should see them in the Create pipeline home scr
 
 Click Create pipeline
 
+### 3) Filestream Integration
+
+1) Click the Kibana menu in the top left
+
+2) Scroll down to Management
+
+3) Select Integrations
+
+4) Search Custom Logs (Filestream)
+
+5) Select the integration
+
+6) Click Add Custom Logs (Filestream)
+
+Next, we will apply the integration to the correct Agent policy, use our ingest pipeline, and ensure it points to the correct log files.
+
+1) Keep the default name
+
+2) Select the Change defaults dropdown
+
+3) Enter the /var/log/vpnlog path
+
+4) Enter vpn.logs.pipeline to match the ingest pipeline we created
+
+5) Select Existing hosts
+
+6) Ensure the Fleet Server Policy is selected
+
+7) Click Save and Continue
+
+8) Click Save and deploy changes
+
+### 4) Confirm Log Ingestion and Parsing
+
+To confirm that we have correctly configured the integration and our ingest pipeline, let's pivot back to Discover:
+
+1) Enter the query event.module: "filestream"
+
+2) Set the time to Last 24 hours
+
+3) Build a table with our new fields by clicking the + next to the following fields
+
+        event.action
+        user.name
+        source.ip
+        vpn.client.ip
+        vpn.server.region
+
+4) Click Save 
+
+5) Give your Discover session the name VPN Logs and a description, then save, as we will use it in the next task
+
