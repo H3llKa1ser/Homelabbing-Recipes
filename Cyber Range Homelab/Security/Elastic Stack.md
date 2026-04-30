@@ -323,7 +323,7 @@ What if we want a more detailed look? Perhaps we want to see the connections as 
 
 Kibana dashboards are fully modular, allowing analysts to drag and drop searches and visualizations into layouts that best support investigation and monitoring.
 
-## Elastic Defend
+## Elastic Defend EDR
 
 ### 1) Configuration
 
