@@ -18,7 +18,7 @@ Set Elasticsearch resources (for VMs)
 
 Create file:
 
-    /etc/elasticsearch/jvm.options.d/heap.options
+    nano /etc/elasticsearch/jvm.options.d/heap.options
 
 Add these
 
