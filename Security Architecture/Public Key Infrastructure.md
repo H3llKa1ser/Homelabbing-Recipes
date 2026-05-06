@@ -3031,3 +3031,1957 @@ openssl req -noout -modulus -in csr.pem | openssl md5
 > - **Stay current** — migrate away from SHA-1, weak keys, and TLS < 1.2
 > - **Use short-lived certs** — reduces exposure window if compromised (90 days ideal)
 > - **Certificate Transparency** — monitor CT logs for unauthorized issuance against your domains
+
+### USER
+Suggest me free homelab projects related to PKI
+
+### ASSISTANT
+# 🏠 Free Homelab PKI Projects
+
+Here's a comprehensive list of hands-on PKI projects you can build in your homelab using entirely free and open-source tools.
+
+---
+
+## 📋 Project Overview Map
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    🏠 HOMELAB PKI PROJECT ROADMAP                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  BEGINNER          INTERMEDIATE           ADVANCED                  │
+│  ────────          ────────────           ────────                  │
+│                                                                     │
+│  1. Build a        4. Mutual TLS          8. ACME Server            │
+│     Root CA           (mTLS) Lab             (Step-CA)              │
+│                                                                     │
+│  2. Two-Tier       5. HashiCorp Vault     9. PKI Monitoring         │
+│     CA Hierarchy      PKI Engine             Dashboard              │
+│                                                                     │
+│  3. SSL/TLS for    6. Active Directory    10. Zero Trust with       │
+│     Home Services     PKI (AD CS)              Certificates         │
+│                                                                     │
+│                    7. Kubernetes PKI      11. Certificate            │
+│                       with cert-manager       Transparency Log      │
+│                                                                     │
+│                                           12. HSM Simulation        │
+│                                               with SoftHSM          │
+│                                                                     │
+│                                           13. Automated PKI         │
+│                                               Pipeline (CI/CD)      │
+│                                                                     │
+│                                           14. SCEP/EST/CMP          │
+│                                               Protocol Lab          │
+│                                                                     │
+│                                           15. Code Signing &        │
+│                                               Email Encryption      │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🟢 BEGINNER PROJECTS
+
+---
+
+### Project 1: Build Your Own Root Certificate Authority
+
+**Goal:** Create a fully functional offline Root CA using OpenSSL
+
+**What You'll Learn:**
+- PKI fundamentals and trust hierarchies
+- Key generation and certificate signing
+- CSR creation and management
+- Certificate extensions and policies
+
+**Tools Needed (Free):**
+- Any Linux VM (Ubuntu/Debian/CentOS)
+- OpenSSL (pre-installed on most Linux distros)
+
+**Lab Architecture:**
+```
+┌──────────────────────────┐
+│   Offline Root CA VM     │
+│   (Air-gapped ideally)   │
+│                          │
+│   - Root CA Key (4096)   │
+│   - Root CA Certificate  │
+│   - CRL Management       │
+│   - Signs Intermediate   │
+└──────────┬───────────────┘
+           │ Signs
+           ▼
+┌──────────────────────────┐
+│   Test Server VM         │
+│                          │
+│   - Server Certificate   │
+│   - Nginx/Apache HTTPS   │
+│   - Browser Trust Test   │
+└──────────────────────────┘
+```
+
+**Steps to Build:**
+```bash
+# 1. Create directory structure
+mkdir -p ~/myCA/{rootCA,intermediateCA,server}/{certs,crl,csr,newcerts,private}
+chmod 700 ~/myCA/rootCA/private ~/myCA/intermediateCA/private
+
+# 2. Initialize CA databases
+touch ~/myCA/rootCA/index.txt
+echo 1000 > ~/myCA/rootCA/serial
+echo 0100 > ~/myCA/rootCA/crlnumber
+
+# 3. Create Root CA openssl.cnf
+cat > ~/myCA/rootCA/openssl.cnf << 'EOF'
+[ca]
+default_ca = CA_default
+
+[CA_default]
+dir               = /root/myCA/rootCA
+certs             = $dir/certs
+crl_dir           = $dir/crl
+new_certs_dir     = $dir/newcerts
+database          = $dir/index.txt
+serial            = $dir/serial
+RANDFILE          = $dir/private/.rand
+private_key       = $dir/private/rootCA.key
+certificate       = $dir/certs/rootCA.crt
+crlnumber         = $dir/crlnumber
+crl               = $dir/crl/rootCA.crl
+crl_extensions    = crl_ext
+default_crl_days  = 30
+default_md        = sha256
+name_opt          = ca_default
+cert_opt          = ca_default
+default_days      = 375
+preserve          = no
+policy            = policy_strict
+
+[policy_strict]
+countryName             = match
+stateOrProvinceName     = match
+organizationName        = match
+commonName              = supplied
+
+[req]
+default_bits        = 4096
+distinguished_name  = req_distinguished_name
+string_mask         = utf8only
+default_md          = sha256
+x509_extensions     = v3_ca
+
+[req_distinguished_name]
+countryName                = Country Name
+stateOrProvinceName        = State
+organizationName           = Organization
+commonName                 = Common Name
+
+[v3_ca]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+[v3_intermediate_ca]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true, pathlen:0
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+[server_cert]
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+[crl_ext]
+authorityKeyIdentifier = keyid:always
+EOF
+
+# 4. Generate Root CA key and certificate
+openssl genrsa -aes256 -out ~/myCA/rootCA/private/rootCA.key 4096
+openssl req -config ~/myCA/rootCA/openssl.cnf \
+  -key ~/myCA/rootCA/private/rootCA.key \
+  -new -x509 -days 7300 -sha256 \
+  -extensions v3_ca \
+  -out ~/myCA/rootCA/certs/rootCA.crt \
+  -subj "/C=US/ST=HomeLab/O=MyHomeLab/CN=HomeLab Root CA"
+
+# 5. Generate a server certificate
+openssl genrsa -out ~/myCA/server/private/webserver.key 2048
+openssl req -new -key ~/myCA/server/private/webserver.key \
+  -out ~/myCA/server/csr/webserver.csr \
+  -subj "/C=US/ST=HomeLab/O=MyHomeLab/CN=web.homelab.local"
+
+openssl ca -config ~/myCA/rootCA/openssl.cnf \
+  -extensions server_cert -days 365 -notext -md sha256 \
+  -in ~/myCA/server/csr/webserver.csr \
+  -out ~/myCA/server/certs/webserver.crt
+
+# 6. Deploy to Nginx and test
+sudo cp ~/myCA/server/certs/webserver.crt /etc/nginx/ssl/
+sudo cp ~/myCA/server/private/webserver.key /etc/nginx/ssl/
+
+# 7. Import Root CA into your browser to trust it
+# Copy rootCA.crt to your workstation and import into browser trust store
+```
+
+**Bonus Challenges:**
+- ☐ Import your Root CA into Windows, macOS, and Linux trust stores
+- ☐ Generate certificates for 5 different homelab services
+- ☐ Create a CRL and test revocation
+- ☐ Set up a web server to serve CRL files
+- ☐ Write a script to automate certificate issuance
+
+---
+
+### Project 2: Two-Tier CA Hierarchy (Root + Intermediate)
+
+**Goal:** Build a production-like PKI with offline Root CA and online Intermediate CA
+
+**What You'll Learn:**
+- Multi-tier CA architecture
+- Certificate chain building
+- Intermediate CA constraints
+- Proper key separation
+
+**Tools Needed (Free):**
+- 2 Linux VMs (1 for Root CA, 1 for Intermediate CA)
+- OpenSSL
+
+**Lab Architecture:**
+```
+┌────────────────────────────┐
+│    🔒 OFFLINE ROOT CA       │
+│    VM1 (Air-gapped)        │
+│                            │
+│    Root CA Key (4096-bit)  │
+│    Root CA Cert (20 years) │
+│    Only powers on to sign  │
+│    Intermediate CA certs   │
+└──────────┬─────────────────┘
+           │ Signs (offline)
+           ▼
+┌────────────────────────────┐
+│    🟢 ONLINE INTERMEDIATE   │
+│    VM2 (Issuing CA)        │
+│                            │
+│    Inter CA Key (4096-bit) │
+│    Inter CA Cert (5 years) │
+│    Issues server/client    │
+│    certificates daily      │
+│    Hosts CRL & OCSP        │
+├────────────────────────────┤
+│    CRL: http://pki/crl     │
+│    OCSP: http://pki:2560   │
+│    AIA: http://pki/aia     │
+└──────────┬─────────────────┘
+           │ Issues
+           ▼
+┌────────────────────────────┐
+│    End-Entity Certificates │
+│    - Web Servers           │
+│    - VPN Gateways          │
+│    - Mail Servers          │
+│    - Client Authentication │
+└────────────────────────────┘
+```
+
+**Key Steps:**
+```bash
+# On Root CA VM (VM1):
+# Generate Root CA (same as Project 1)
+# Sign the Intermediate CA CSR
+# Shut down Root CA VM and store securely
+
+# On Intermediate CA VM (VM2):
+# Generate Intermediate CA key
+openssl genrsa -aes256 -out intermediate/private/intermediate.key 4096
+
+# Generate CSR (transfer to Root CA for signing)
+openssl req -config intermediate/openssl.cnf -new -sha256 \
+  -key intermediate/private/intermediate.key \
+  -out intermediate/csr/intermediate.csr \
+  -subj "/C=US/ST=HomeLab/O=MyHomeLab/CN=HomeLab Intermediate CA"
+
+# After Root CA signs it, build the chain
+cat intermediate.crt rootCA.crt > ca-chain.crt
+
+# Now issue end-entity certificates from Intermediate CA
+# Set up CRL distribution and OCSP responder
+openssl ocsp -port 2560 -index index.txt \
+  -CA intermediate.crt -rsigner ocsp.crt -rkey ocsp.key
+
+# Set up Nginx to serve CRL and AIA
+# http://pki.homelab.local/crl/intermediate.crl
+# http://pki.homelab.local/aia/intermediate.crt
+```
+
+**Bonus Challenges:**
+- ☐ Simulate Root CA compromise — rebuild from backup
+- ☐ Implement path length constraints on Intermediate CA
+- ☐ Set up name constraints to limit what domains Intermediate can sign for
+- ☐ Create a third tier (Policy CA) between Root and Issuing
+
+---
+
+### Project 3: Secure All Home Services with SSL/TLS
+
+**Goal:** Issue and deploy certificates to every service in your homelab
+
+**What You'll Learn:**
+- Real-world certificate deployment
+- Different service configurations
+- Certificate troubleshooting
+- Full-chain trust management
+
+**Services to Secure:**
+```
+┌─────────────────────────────────────────────────┐
+│           Services to Secure with TLS           │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  🌐 Web Services:                               │
+│     - Nginx reverse proxy (443)                 │
+│     - Apache web server (443)                   │
+│     - Traefik / Caddy                           │
+│     - Proxmox Web UI (8006)                     │
+│     - Portainer (9443)                          │
+│     - Grafana (3000)                            │
+│     - Home Assistant (8123)                     │
+│                                                 │
+│  📧 Mail Services:                               │
+│     - Postfix SMTP (465/587)                    │
+│     - Dovecot IMAP (993)                        │
+│                                                 │
+│  🗄️ Database Services:                           │
+│     - PostgreSQL (5432)                         │
+│     - MySQL/MariaDB (3306)                      │
+│     - MongoDB (27017)                           │
+│                                                 │
+│  📂 File Services:                               │
+│     - Nextcloud                                 │
+│     - Syncthing                                 │
+│     - MinIO (S3-compatible)                     │
+│                                                 │
+│  🔐 Infrastructure:                              │
+│     - OpenVPN / WireGuard                       │
+│     - SSH (certificate-based)                   │
+│     - LDAPS (OpenLDAP)                          │
+│     - Docker Registry (5000)                    │
+│     - Pi-hole Admin                             │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+**Example — Secure Docker Registry:**
+```bash
+# Generate certificate for Docker Registry
+openssl req -new -key registry.key -out registry.csr \
+  -subj "/CN=registry.homelab.local" \
+  -addext "subjectAltName=DNS:registry.homelab.local,IP:192.168.1.50"
+
+# Sign with your Intermediate CA
+openssl ca -config intermediate.cnf -extensions server_cert \
+  -in registry.csr -out registry.crt
+
+# Deploy to Docker Registry
+docker run -d -p 5000:5000 --name registry \
+  -v /certs:/certs \
+  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry.crt \
+  -e REGISTRY_HTTP_TLS_KEY=/certs/registry.key \
+  registry:2
+
+# Configure Docker daemon to trust your CA
+sudo mkdir -p /etc/docker/certs.d/registry.homelab.local:5000
+sudo cp ca-chain.crt /etc/docker/certs.d/registry.homelab.local:5000/ca.crt
+sudo systemctl restart docker
+```
+
+---
+
+## 🟡 INTERMEDIATE PROJECTS
+
+---
+
+### Project 4: Mutual TLS (mTLS) Authentication Lab
+
+**Goal:** Build a system where both client AND server authenticate via certificates
+
+**What You'll Learn:**
+- Client certificate generation and management
+- Mutual TLS configuration
+- Certificate-based access control
+- Certificate mapping to user identities
+
+**Tools Needed (Free):**
+- Linux VM with Nginx or Apache
+- OpenSSL
+- Your homelab CA from Project 1 or 2
+
+**Lab Architecture:**
+```
+┌──────────────────┐          mTLS           ┌──────────────────┐
+│   Client Device  │ ◄─────────────────────► │   Nginx Server   │
+│                  │                          │                  │
+│  client.crt      │  1. Client Hello        │  server.crt      │
+│  client.key      │  2. Server Hello +      │  server.key      │
+│  ca-chain.crt    │     Server Cert         │  ca-chain.crt    │
+│                  │  3. Certificate Request  │                  │
+│                  │  4. Client Cert          │  Validates:      │
+│                  │  5. Verify Both Sides    │  - Client cert   │
+│                  │  6. Encrypted Channel    │  - Client CN     │
+│                  │                          │  - Revocation    │
+└──────────────────┘                          └──────────────────┘
+```
+
+**Build Steps:**
+```bash
+# === 1. Generate Client Certificate ===
+# Generate client key
+openssl genrsa -out client.key 2048
+
+# Generate client CSR
+openssl req -new -key client.key -out client.csr \
+  -subj "/C=US/ST=HomeLab/O=MyHomeLab/OU=Users/CN=john.doe"
+
+# Sign with CA (using client_cert extensions)
+openssl ca -config intermediate.cnf -extensions client_cert \
+  -days 365 -notext -md sha256 \
+  -in client.csr -out client.crt
+
+# Create PKCS#12 for browser import
+openssl pkcs12 -export -out john_doe.p12 \
+  -inkey client.key -in client.crt -certfile ca-chain.crt \
+  -name "John Doe Client Certificate"
+
+# === 2. Configure Nginx for mTLS ===
+cat > /etc/nginx/conf.d/mtls.conf << 'EOF'
+server {
+    listen 443 ssl;
+    server_name secure.homelab.local;
+
+    # Server certificate
+    ssl_certificate     /etc/nginx/ssl/server.crt;
+    ssl_certificate_key /etc/nginx/ssl/server.key;
+
+    # Client certificate verification
+    ssl_client_certificate /etc/nginx/ssl/ca-chain.crt;
+    ssl_verify_client on;
+    ssl_verify_depth 2;
+
+    # Optional: CRL checking
+    ssl_crl /etc/nginx/ssl/intermediate.crl;
+
+    # Pass client cert info to application
+    location / {
+        proxy_set_header X-Client-CN $ssl_client_s_dn_cn;
+        proxy_set_header X-Client-Serial $ssl_client_serial;
+        proxy_set_header X-Client-Verify $ssl_client_verify;
+
+        # Only allow specific CNs
+        if ($ssl_client_s_dn_cn !~ "^(john\.doe|jane\.smith|admin)$") {
+            return 403;
+        }
+
+        root /var/www/secure;
+        index index.html;
+    }
+}
+EOF
+
+# === 3. Test mTLS Connection ===
+# With client certificate (should succeed)
+curl --cacert ca-chain.crt --cert client.crt --key client.key \
+  https://secure.homelab.local
+
+# Without client certificate (should fail)
+curl --cacert ca-chain.crt https://secure.homelab.local
+# Expected: 400 Bad Request - No required SSL certificate was sent
+```
+
+**Bonus Challenges:**
+- ☐ Map client certificates to different authorization levels
+- ☐ Set up mTLS for a microservices environment (service-to-service)
+- ☐ Implement certificate-based SSH authentication
+- ☐ Revoke a client certificate and verify access is denied
+- ☐ Build an mTLS-protected API with client cert header forwarding
+
+---
+
+### Project 5: HashiCorp Vault PKI Secrets Engine
+
+**Goal:** Deploy Vault as an automated certificate authority with API-driven issuance
+
+**What You'll Learn:**
+- Dynamic secret management
+- Short-lived certificates
+- API-driven PKI operations
+- Role-based certificate issuance
+- Auto-rotation of certificates
+
+**Tools Needed (Free):**
+- HashiCorp Vault (open source)
+- Linux VM or Docker
+- Optional: Consul for storage backend
+
+**Lab Architecture:**
+```
+┌───────────────────────────────────────────────────────┐
+│                  HashiCorp Vault                       │
+│                                                       │
+│  ┌─────────────┐    ┌─────────────┐    ┌───────────┐ │
+│  │  Root PKI    │───►│ Inter PKI   │───►│ Roles     │ │
+│  │  Engine      │    │ Engine      │    │           │ │
+│  │             │    │             │    │ web-role  │ │
+│  │ pki/        │    │ pki_int/    │    │ api-role  │ │
+│  │             │    │             │    │ client    │ │
+│  └─────────────┘    └──────┬──────┘    └─────┬─────┘ │
+│                            │                 │       │
+│                     Issues Certificates      │       │
+│                     via API / CLI            │       │
+└────────────────────────────┼─────────────────┼───────┘
+                             │                 │
+              ┌──────────────┴──────┐    ┌─────┴──────┐
+              │   Web Servers       │    │  API Apps   │
+              │   (auto-rotation)   │    │  (dynamic) │
+              └─────────────────────┘    └────────────┘
+```
+
+**Build Steps:**
+```bash
+# === 1. Install Vault ===
+# Docker method
+docker run -d --name vault \
+  --cap-add=IPC_LOCK \
+  -p 8200:8200 \
+  -e 'VAULT_DEV_ROOT_TOKEN_ID=homelab-root-token' \
+  -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' \
+  hashicorp/vault:latest
+
+export VAULT_ADDR='http://127.0.0.1:8200'
+export VAULT_TOKEN='homelab-root-token'
+
+# === 2. Enable Root PKI Engine ===
+vault secrets enable pki
+vault secrets tune -max-lease-ttl=87600h pki
+
+# Generate Root CA
+vault write -format=json pki/root/generate/internal \
+  common_name="HomeLab Root CA" \
+  issuer_name="homelab-root" \
+  ttl=87600h > root_ca.json
+
+# Extract Root CA certificate
+cat root_ca.json | jq -r '.data.certificate' > root_ca.crt
+
+# Configure CA and CRL URLs
+vault write pki/config/urls \
+  issuing_certificates="http://vault.homelab.local:8200/v1/pki/ca" \
+  crl_distribution_points="http://vault.homelab.local:8200/v1/pki/crl"
+
+# === 3. Enable Intermediate PKI Engine ===
+vault secrets enable -path=pki_int pki
+vault secrets tune -max-lease-ttl=43800h pki_int
+
+# Generate Intermediate CSR
+vault write -format=json pki_int/intermediate/generate/internal \
+  common_name="HomeLab Intermediate CA" \
+  issuer_name="homelab-intermediate" > intermediate_csr.json
+
+# Sign with Root CA
+vault write -format=json pki/root/sign-intermediate \
+  csr="$(cat intermediate_csr.json | jq -r '.data.csr')" \
+  format=pem_bundle \
+  ttl=43800h > signed_intermediate.json
+
+# Set the signed certificate
+vault write pki_int/intermediate/set-signed \
+  certificate="$(cat signed_intermediate.json | jq -r '.data.certificate')"
+
+# === 4. Create Roles (Certificate Templates) ===
+# Web server role (short-lived: 30 days)
+vault write pki_int/roles/web-servers \
+  allowed_domains="homelab.local" \
+  allow_subdomains=true \
+  allow_bare_domains=false \
+  max_ttl=720h \
+  key_type=rsa \
+  key_bits=2048 \
+  require_cn=true \
+  server_flag=true \
+  client_flag=false
+
+# Client certificate role
+vault write pki_int/roles/client-certs \
+  allowed_domains="homelab.local" \
+  allow_any_name=true \
+  max_ttl=720h \
+  key_type=rsa \
+  key_bits=2048 \
+  server_flag=false \
+  client_flag=true \
+  email_protection_flag=true
+
+# Short-lived certificates role (24 hours - great for microservices)
+vault write pki_int/roles/ephemeral-certs \
+  allowed_domains="homelab.local,service.consul" \
+  allow_subdomains=true \
+  max_ttl=24h \
+  key_type=ec \
+  key_bits=256 \
+  generate_lease=true
+
+# === 5. Issue Certificates ===
+# Issue a web server certificate
+vault write -format=json pki_int/issue/web-servers \
+  common_name="web.homelab.local" \
+  alt_names="www.homelab.local" \
+  ip_sans="192.168.1.10" \
+  ttl=720h > web_cert.json
+
+# Extract certificate, key, and chain
+cat web_cert.json | jq -r '.data.certificate' > web.crt
+cat web_cert.json | jq -r '.data.private_key' > web.key
+cat web_cert.json | jq -r '.data.ca_chain[]' > ca-chain.crt
+
+# Issue a client certificate
+vault write -format=json pki_int/issue/client-certs \
+  common_name="john.doe@homelab.local" \
+  ttl=720h > client_cert.json
+
+# === 6. Revoke & Tidy ===
+# Revoke a certificate
+vault write pki_int/revoke serial_number="$(cat web_cert.json | jq -r '.data.serial_number')"
+
+# Tidy the certificate store
+vault write pki_int/tidy \
+  tidy_cert_store=true \
+  tidy_revoked_certs=true \
+  safety_buffer=72h
+
+# === 7. Create Policies for Automation ===
+vault policy write web-team - << EOF
+path "pki_int/issue/web-servers" {
+  capabilities = ["create", "update"]
+}
+path "pki_int/sign/web-servers" {
+  capabilities = ["create", "update"]
+}
+EOF
+
+# Create a token for the web team
+vault token create -policy=web-team -ttl=8760h
+```
+
+**Bonus Challenges:**
+- ☐ Set up Vault auto-unseal with a second Vault instance
+- ☐ Integrate Vault with Consul for service mesh mTLS
+- ☐ Build a script that auto-rotates Nginx certs from Vault
+- ☐ Set up Vault Agent for automatic certificate renewal
+- ☐ Create different roles for different teams/environments
+- ☐ Integrate with LDAP/AD for authentication
+
+---
+
+### Project 6: Active Directory Certificate Services (AD CS) Lab
+
+**Goal:** Build a full Microsoft PKI environment with auto-enrollment
+
+**What You'll Learn:**
+- Enterprise PKI in Windows environments
+- Auto-enrollment via Group Policy
+- Certificate templates
+- NDES/SCEP for network devices
+
+**Tools Needed (Free):**
+- Windows Server Evaluation (180 days free)
+- Windows 10/11 VM (for client testing)
+- VirtualBox or Proxmox (free hypervisors)
+
+**Lab Architecture:**
+```
+┌──────────────────────────────┐
+│  DC01 - Domain Controller    │
+│  + Offline Root CA           │
+│  Windows Server 2022 Eval    │
+│                              │
+│  Roles:                      │
+│  - AD DS                     │
+│  - AD CS (Root CA)           │
+└──────────┬───────────────────┘
+           │
+           ▼
+┌──────────────────────────────┐
+│  CA01 - Issuing CA           │
+│  Windows Server 2022 Eval    │
+│                              │
+│  Roles:                      │
+│  - AD CS (Enterprise Sub CA) │
+│  - NDES (SCEP)               │
+│  - Web Enrollment             │
+│  - OCSP Responder            │
+└──────────┬───────────────────┘
+           │ Auto-enrolls
+           ▼
+┌──────────────────────────────┐
+│  WIN-CLIENT                  │
+│  Windows 10/11               │
+│                              │
+│  - Auto-enrolled user cert   │
+│  - Auto-enrolled machine cert│
+│  - Smart card logon test     │
+│  - EFS encryption test       │
+└──────────────────────────────┘
+```
+
+**Key Steps:**
+```powershell
+# === On DC01: Install Root CA ===
+Install-WindowsFeature AD-Certificate -IncludeManagementTools
+Install-AdcsCertificationAuthority -CAType StandaloneRootCA `
+  -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
+  -KeyLength 4096 -HashAlgorithmName SHA256 `
+  -ValidityPeriod Years -ValidityPeriodUnits 20 `
+  -CACommonName "HomeLab Root CA"
+
+# === On CA01: Install Enterprise Subordinate CA ===
+Install-WindowsFeature AD-Certificate, ADCS-Web-Enrollment, ADCS-Online-Cert -IncludeManagementTools
+Install-AdcsCertificationAuthority -CAType EnterpriseSubordinateCA `
+  -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
+  -KeyLength 4096 -HashAlgorithmName SHA256 `
+  -CACommonName "HomeLab Issuing CA"
+
+Install-AdcsWebEnrollment
+Install-AdcsOnlineResponder
+
+# === Configure Auto-Enrollment GPO ===
+# Group Policy: Computer Config → Policies → Windows Settings →
+# Security Settings → Public Key Policies → Certificate Services Client -
+# Auto-Enrollment → Enabled
+
+# === Configure NDES for Network Devices ===
+Install-AdcsNetworkDeviceEnrollmentService -ServiceAccountName "HOMELAB\NDESSvc" `
+  -ServiceAccountPassword (ConvertTo-SecureString "P@ss" -AsPlainText -Force) `
+  -CAConfig "CA01.homelab.local\HomeLab Issuing CA"
+
+# === Create Custom Certificate Templates ===
+# Open certtmpl.msc → Duplicate "Web Server" template
+# Customize: Key size, validity, auto-enrollment permissions
+# Publish template on CA: certsrv.msc → Certificate Templates → New → Template to Issue
+```
+
+**Bonus Challenges:**
+- ☐ Configure NDES and enroll a Cisco router via SCEP
+- ☐ Set up smart card authentication simulation
+- ☐ Configure EFS (Encrypted File System) with certificates
+- ☐ Set up 802.1X authentication with NPS and certificates
+- ☐ Deploy certificates to domain computers via auto-enrollment
+- ☐ Configure Key Recovery Agent for key archival
+
+---
+
+### Project 7: Kubernetes PKI with cert-manager
+
+**Goal:** Automate certificate lifecycle in Kubernetes using cert-manager
+
+**What You'll Learn:**
+- Kubernetes TLS secrets management
+- Automated certificate issuance and renewal
+- Ingress TLS configuration
+- Integration with multiple CA backends
+
+**Tools Needed (Free):**
+- Minikube, K3s, or Kind (free Kubernetes)
+- cert-manager (open source)
+- kubectl
+- Helm
+
+**Lab Architecture:**
+```
+┌──────────────────────────────────────────────────────┐
+│                Kubernetes Cluster                     │
+│                                                      │
+│  ┌────────────────┐     ┌──────────────────────────┐ │
+│  │  cert-manager   │────►│  ClusterIssuer           │ │
+│  │  Controller     │     │  (Self-signed / CA /     │ │
+│  │                │     │   Vault / ACME)           │ │
+│  └───────┬────────┘     └──────────────────────────┘ │
+│          │                                           │
+│          │ Auto-creates/renews                       │
+│          ▼                                           │
+│  ┌────────────────┐     ┌──────────────────────────┐ │
+│  │  Certificate    │────►│  TLS Secret              │ │
+│  │  Resources      │     │  (auto-generated)        │ │
+│  └────────────────┘     └──────────┬───────────────┘ │
+│                                    │                 │
+│                          ┌─────────▼───────────┐     │
+│                          │  Ingress / Gateway   │     │
+│                          │  (uses TLS secret)   │     │
+│                          └─────────────────────┘     │
+└──────────────────────────────────────────────────────┘
+```
+
+**Build Steps:**
+```bash
+# === 1. Install K3s (lightweight Kubernetes) ===
+curl -sfL https://get.k3s.io | sh -
+
+# === 2. Install cert-manager ===
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
+kubectl wait --for=condition=Ready pods -l app.kubernetes.io/instance=cert-manager -n cert-manager --timeout=120s
+
+# === 3. Create a Self-Signed ClusterIssuer ===
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+EOF
+
+# === 4. Create a CA Issuer (using your homelab CA) ===
+# First, create a secret with your CA cert and key
+kubectl create secret tls homelab-ca-secret \
+  --cert=intermediate.crt \
+  --key=intermediate.key \
+  -n cert-manager
+
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: homelab-ca-issuer
+spec:
+  ca:
+    secretName: homelab-ca-secret
+EOF
+
+# === 5. Create a Vault Issuer (if using Vault from Project 5) ===
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: vault-issuer
+spec:
+  vault:
+    path: pki_int/sign/web-servers
+    server: http://vault.homelab.local:8200
+    auth:
+      tokenSecretRef:
+        name: vault-token
+        key: token
+EOF
+
+# === 6. Request a Certificate ===
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: web-app-cert
+  namespace: default
+spec:
+  secretName: web-app-tls
+  duration: 720h        # 30 days
+  renewBefore: 168h     # Renew 7 days before expiry
+  issuerRef:
+    name: homelab-ca-issuer
+    kind: ClusterIssuer
+  commonName: app.homelab.local
+  dnsNames:
+    - app.homelab.local
+    - www.homelab.local
+  ipAddresses:
+    - 192.168.1.100
+  privateKey:
+    algorithm: RSA
+    size: 2048
+EOF
+
+# === 7. Use with Ingress (auto TLS) ===
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-app-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "homelab-ca-issuer"
+spec:
+  tls:
+    - hosts:
+        - app.homelab.local
+      secretName: web-app-tls-auto
+  rules:
+    - host: app.homelab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-app
+                port:
+                  number: 80
+EOF
+
+# === 8. Monitor Certificates ===
+kubectl get certificates -A
+kubectl describe certificate web-app-cert
+kubectl get certificaterequests -A
+kubectl get secrets web-app-tls -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -noout -text
+```
+
+**Bonus Challenges:**
+- ☐ Set up ACME issuer with Let's Encrypt staging
+- ☐ Configure trust-manager to distribute CA bundles across namespaces
+- ☐ Build a Helm chart that auto-requests certificates for each deployment
+- ☐ Implement pod-to-pod mTLS using cert-manager + Istio/Linkerd
+- ☐ Set up monitoring with Prometheus for certificate expiry alerts
+
+---
+
+## 🔴 ADVANCED PROJECTS
+
+---
+
+### Project 8: ACME Server with Smallstep step-ca
+
+**Goal:** Run your own ACME-compatible CA (like Let's Encrypt, but private)
+
+**What You'll Learn:**
+- ACME protocol internals
+- Automated certificate lifecycle
+- Private ACME infrastructure
+- Integration with Certbot and other ACME clients
+
+**Tools Needed (Free):**
+- [step-ca](https://smallstep.com/docs/step-ca) (open source)
+- [step CLI](https://smallstep.com/docs/step-cli)
+- Certbot or acme.sh (as ACME clients)
+
+**Lab Architecture:**
+```
+┌─────────────────────────────────────────────────────┐
+│              Smallstep step-ca Server                │
+│                                                     │
+│  ┌─────────────┐  ┌────────────┐  ┌──────────────┐ │
+│  │ ACME         │  │ JWK        │  │ OIDC         │ │
+│  │ Provisioner  │  │ Provisioner│  │ Provisioner  │ │
+│  │              │  │            │  │ (Google/SSO) │ │
+│  └──────┬───────┘  └─────┬──────┘  └──────┬───────┘ │
+│         │                │                │         │
+│         └────────────────┼────────────────┘         │
+│                          │                          │
+│              ┌───────────▼──────────┐               │
+│              │  Certificate Engine  │               │
+│              │  - Short-lived certs │               │
+│              │  - Auto-renewal      │               │
+│              │  - Revocation        │               │
+│              └──────────────────────┘               │
+└───────────────────────┬─────────────────────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+  ┌──────────┐   ┌──────────┐   ┌──────────────┐
+  │ Certbot   │   │ acme.sh  │   │ cert-manager │
+  │ Client    │   │ Client   │   │ (K8s)        │
+  └──────────┘   └──────────┘   └──────────────┘
+```
+
+**Build Steps:**
+```bash
+# === 1. Install step CLI and step-ca ===
+wget https://dl.smallstep.com/gh-release/cli/docs-cli-install/v0.25.2/step-cli_0.25.2_amd64.deb
+sudo dpkg -i step-cli_0.25.2_amd64.deb
+
+wget https://dl.smallstep.com/gh-release/certificates/docs-ca-install/v0.25.2/step-ca_0.25.2_amd64.deb
+sudo dpkg -i step-ca_0.25.2_amd64.deb
+
+# === 2. Initialize step-ca ===
+step ca init \
+  --name="HomeLab ACME CA" \
+  --dns="ca.homelab.local" \
+  --address=":8443" \
+  --provisioner="admin" \
+  --deployment-type standalone
+
+# === 3. Add ACME Provisioner ===
+step ca provisioner add acme --type ACME
+
+# === 4. Start step-ca ===
+step-ca $(step path)/config/ca.json &
+
+# === 5. Bootstrap trust ===
+step ca bootstrap --ca-url https://ca.homelab.local:8443 --fingerprint <ROOT_FINGERPRINT>
+
+# Install root CA into system trust store
+step certificate install $(step path)/certs/root_ca.crt
+
+# === 6. Use with Certbot (ACME client) ===
+sudo REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt \
+  certbot certonly --standalone \
+  --server https://ca.homelab.local:8443/acme/acme/directory \
+  -d web.homelab.local \
+  --agree-tos --no-eff-email --email admin@homelab.local
+
+# === 7. Use with acme.sh ===
+acme.sh --issue --standalone \
+  --server https://ca.homelab.local:8443/acme/acme/directory \
+  -d api.homelab.local \
+  --ca-bundle $(step path)/certs/root_ca.crt
+
+# === 8. Use with cert-manager in Kubernetes ===
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: step-ca-issuer
+spec:
+  acme:
+    server: https://ca.homelab.local:8443/acme/acme/directory
+    privateKeySecretRef:
+      name: step-ca-account-key
+    caBundle: $(base64 -w0 $(step path)/certs/root_ca.crt)
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+EOF
+
+# === 9. Issue a quick certificate via step CLI ===
+step ca certificate "app.homelab.local" app.crt app.key \
+  --ca-url https://ca.homelab.local:8443 \
+  --not-after=24h
+
+# === 10. Renew a certificate ===
+step ca renew app.crt app.key --force
+
+# === 11. Set up automatic renewal daemon ===
+step ca renew --daemon app.crt app.key \
+  --exec "systemctl reload nginx"
+```
+
+**Bonus Challenges:**
+- ☐ Set up OIDC provisioner (authenticate via Google/GitHub before getting certs)
+- ☐ Configure SSH certificate authority with step-ca
+- ☐ Build auto-enrollment for all homelab VMs using cloud-init + step
+- ☐ Set up step-ca in HA mode with multiple instances
+- ☐ Integrate with Nebula mesh networking for certificate-based overlay network
+
+---
+
+### Project 9: PKI Monitoring Dashboard
+
+**Goal:** Build a real-time monitoring dashboard for all certificates in your infrastructure
+
+**What You'll Learn:**
+- Certificate metrics and alerting
+- Prometheus exporters
+- Grafana dashboard creation
+- Proactive expiry management
+
+**Tools Needed (Free):**
+- Prometheus (open source)
+- Grafana (open source)
+- x509-certificate-exporter or ssl_exporter
+- Alertmanager
+
+**Lab Architecture:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   PKI Monitoring Stack                       │
+│                                                             │
+│  ┌─────────────────┐     ┌──────────────────┐              │
+│  │  Prometheus      │◄────│ x509-cert-       │              │
+│  │                 │     │ exporter          │              │
+│  │  Scrapes every  │     │                  │              │
+│  │  5 minutes      │     │ Monitors:        │              │
+│  │                 │     │ - Local certs    │              │
+│  └────────┬────────┘     │ - Remote hosts   │              │
+│           │              │ - Kubernetes     │              │
+│           │              │ - File paths     │              │
+│           ▼              └──────────────────┘              │
+│  ┌─────────────────┐                                       │
+│  │  Grafana         │     ┌──────────────────┐              │
+│  │  Dashboard       │     │  Alertmanager    │              │
+│  │                 │     │                  │              │
+│  │  - Expiry       │     │  Alerts via:     │              │
+│  │    timeline     │     │  - Email         │              │
+│  │  - Key sizes    │     │  - Slack         │              │
+│  │  - Algorithms   │     │  - PagerDuty     │              │
+│  │  - Issuers      │     │  - Webhook       │              │
+│  │  - Chain status │     │                  │              │
+│  └─────────────────┘     └──────────────────┘              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Build Steps:**
+```bash
+# === 1. Deploy with Docker Compose ===
+cat > docker-compose.yml << 'EOF'
+version: '3.8'
+services:
+  x509-exporter:
+    image: enix/x509-certificate-exporter:latest
+    ports:
+      - "9793:9793"
+    volumes:
+      - /etc/ssl/certs:/certs:ro
+      - ./targets.yaml:/targets.yaml:ro
+    command:
+      - --watch-file=/certs/*.crt
+      - --watch-file=/certs/*.pem
+      - --trim-path-components=0
+
+  ssl-exporter:
+    image: ribbybibby/ssl-exporter:latest
+    ports:
+      - "9219:9219"
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  grafana-data:
+EOF
+
+# === 2. Prometheus Configuration ===
+cat > prometheus.yml << 'EOF'
+global:
+  scrape_interval: 60s
+  evaluation_interval: 60s
+
+rule_files:
+  - alert-rules.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+  - job_name: 'x509-certificates'
+    static_configs:
+      - targets: ['x509-exporter:9793']
+
+  - job_name: 'ssl-probe'
+    metrics_path: /probe
+    static_configs:
+      - targets:
+          - web.homelab.local:443
+          - mail.homelab.local:993
+          - api.homelab.local:8443
+          - vault.homelab.local:8200
+          - proxmox.homelab.local:8006
+          - grafana.homelab.local:3000
+          - nextcloud.homelab.local:443
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: ssl-exporter:9219
+EOF
+
+# === 3. Alert Rules ===
+cat > alert-rules.yml << 'EOF'
+groups:
+  - name: certificate-alerts
+    rules:
+      - alert: CertificateExpiringSoon
+        expr: x509_cert_not_after - time() < 30 * 24 * 3600
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Certificate expiring within 30 days"
+          description: "Certificate {{ $labels.subject }} expires in {{ $value | humanizeDuration }}"
+
+      - alert: CertificateExpiryCritical
+        expr: x509_cert_not_after - time() < 7 * 24 * 3600
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          summary: "Certificate expiring within 7 days!"
+          description: "CRITICAL: {{ $labels.subject }} expires in {{ $value | humanizeDuration }}"
+
+      - alert: CertificateExpired
+        expr: x509_cert_not_after - time() < 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Certificate has EXPIRED!"
+          description: "{{ $labels.subject }} has expired!"
+
+      - alert: CertificateWeakKey
+        expr: x509_cert_not_after > 0 and x509_cert_key_size < 2048
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Certificate using weak key"
+          description: "{{ $labels.subject }} uses {{ $value }}-bit key"
+
+      - alert: SSLProbeExpiringSoon
+        expr: ssl_cert_not_after - time() < 30 * 24 * 3600
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Remote SSL certificate expiring"
+          description: "Certificate on {{ $labels.instance }} expires soon"
+
+      - alert: SSLProbeFailed
+        expr: ssl_tls_connect_success == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SSL/TLS connection failed"
+          description: "Cannot establish TLS to {{ $labels.instance }}"
+EOF
+
+# === 4. Alertmanager Configuration ===
+cat > alertmanager.yml << 'EOF'
+global:
+  smtp_smarthost: 'smtp.homelab.local:587'
+  smtp_from: 'pki-alerts@homelab.local'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 24h
+  receiver: 'pki-team'
+
+  routes:
+    - match:
+        severity: critical
+      receiver: 'pki-critical'
+      repeat_interval: 1h
+
+receivers:
+  - name: 'pki-team'
+    email_configs:
+      - to: 'admin@homelab.local'
+        subject: '⚠️ PKI Alert: {{ .GroupLabels.alertname }}'
+
+  - name: 'pki-critical'
+    email_configs:
+      - to: 'admin@homelab.local'
+        subject: '🔴 CRITICAL PKI Alert: {{ .GroupLabels.alertname }}'
+    # webhook_configs:
+    #   - url: 'https://hooks.slack.com/services/...'
+EOF
+
+# === 5. Start everything ===
+docker-compose up -d
+
+# === 6. Import Grafana Dashboard ===
+# Navigate to http://grafana.homelab.local:3000
+# Import dashboard ID: 13922 (x509 Certificate Exporter)
+# Or create custom dashboards with the ssl_* and x509_* metrics
+```
+
+---
+
+### Project 10: Zero Trust Network with Certificate-Based Authentication
+
+**Goal:** Build a zero-trust architecture where every connection requires certificate authentication
+
+**What You'll Learn:**
+- Zero trust principles
+- Service mesh with mTLS
+- Network segmentation with certificates
+- Identity-based access control
+
+**Tools Needed (Free):**
+- WireGuard or Nebula (mesh VPN)
+- Istio or Linkerd (service mesh)
+- SPIFFE/SPIRE (identity framework)
+- step-ca (certificate authority)
+
+**Lab Architecture:**
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    ZERO TRUST PKI ARCHITECTURE                    │
+│                                                                  │
+│  ┌──────────┐    SPIFFE IDs     ┌──────────────────┐            │
+│  │  SPIRE    │─────────────────►│  Service Identity │            │
+│  │  Server   │                  │  spiffe://homelab/ │            │
+│  └──────────┘                  │  service/web       │            │
+│       │                        └──────────────────┘            │
+│       │ Issues SVIDs                                            │
+│       ▼                                                         │
+│  ┌──────────────────────────────────────────────┐               │
+│  │              Service Mesh (Istio)             │               │
+│  │                                              │               │
+│  │   ┌──────┐  mTLS  ┌──────┐  mTLS  ┌──────┐ │               │
+│  │   │Web   │◄──────►│API   │◄──────►│DB    │ │               │
+│  │   │Proxy │        │Svc   │        │Proxy │ │               │
+│  │   └──────┘        └──────┘        └──────┘ │               │
+│  │      ▲                                ▲     │               │
+│  │      │           ALL traffic          │     │               │
+│  │      │          encrypted with        │     │               │
+│  │      │        mutual TLS (mTLS)       │     │               │
+│  │      │                                │     │               │
+│  └──────┼────────────────────────────────┼─────┘               │
+│         │                                │                      │
+│  ┌──────┴──────┐                  ┌──────┴──────┐              │
+│  │ Nebula Node  │    Encrypted    │ Nebula Node  │              │
+│  │ (cert-based  │◄──────────────►│ (cert-based  │              │
+│  │  overlay)    │    overlay      │  overlay)    │              │
+│  └─────────────┘    network      └─────────────┘              │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Build Steps — Nebula Mesh VPN:**
+```bash
+# === Nebula: Certificate-Based Overlay Network ===
+
+# 1. Download Nebula
+wget https://github.com/slackhq/nebula/releases/download/v1.8.2/nebula-linux-amd64.tar.gz
+tar xzf nebula-linux-amd64.tar.gz
+
+# 2. Create Nebula CA
+./nebula-cert ca -name "HomeLab Nebula CA" -duration 8760h
+
+# 3. Sign node certificates
+./nebula-cert sign -name "lighthouse" -ip "10.42.42.1/24" \
+  -groups "infra,lighthouse"
+./nebula-cert sign -name "webserver" -ip "10.42.42.10/24" \
+  -groups "web,production"
+./nebula-cert sign -name "database" -ip "10.42.42.20/24" \
+  -groups "database,production"
+./nebula-cert sign -name "workstation" -ip "10.42.42.100/24" \
+  -groups "users,admin"
+
+# 4. Configure lighthouse node
+cat > lighthouse-config.yml << 'EOF'
+pki:
+  ca: /etc/nebula/ca.crt
+  cert: /etc/nebula/lighthouse.crt
+  key: /etc/nebula/lighthouse.key
+  # blocklist:
+  #   - "<fingerprint_of_revoked_cert>"
+
+static_host_map:
+  "10.42.42.1": ["<PUBLIC_IP>:4242"]
+
+lighthouse:
+  am_lighthouse: true
+
+listen:
+  host: 0.0.0.0
+  port: 4242
+
+firewall:
+  outbound:
+    - port: any
+      proto: any
+      host: any
+
+  inbound:
+    # Only web group can access port 443
+    - port: 443
+      proto: tcp
+      groups:
+        - web
+        - users
+
+    # Only database group internal access
+    - port: 5432
+      proto: tcp
+      groups:
+        - database
+
+    # Admin group can access everything
+    - port: any
+      proto: any
+      groups:
+        - admin
+EOF
+
+# 5. Start Nebula
+./nebula -config lighthouse-config.yml
+
+# 6. Revoke a compromised node
+# Add the certificate fingerprint to the blocklist in config
+# ./nebula-cert print -path compromised_node.crt
+# Add fingerprint to pki.blocklist in all configs
+```
+
+**Build Steps — SPIFFE/SPIRE:**
+```bash
+# === SPIFFE/SPIRE: Workload Identity ===
+
+# 1. Install SPIRE Server
+wget https://github.com/spiffe/spire/releases/download/v1.9.0/spire-1.9.0-linux-amd64-musl.tar.gz
+tar xzf spire-*.tar.gz
+
+# 2. Configure SPIRE Server
+cat > server.conf << 'EOF'
+server {
+    bind_address = "0.0.0.0"
+    bind_port = "8081"
+    socket_path = "/tmp/spire-server/private/api.sock"
+    trust_domain = "homelab.local"
+    data_dir = "/opt/spire/data/server"
+    log_level = "DEBUG"
+
+    ca_key_type = "ec-p256"
+    default_x509_svid_ttl = "1h"
+    ca_ttl = "24h"
+}
+
+plugins {
+    DataStore "sql" {
+        plugin_data {
+            database_type = "sqlite3"
+            connection_string = "/opt/spire/data/server/datastore.sqlite3"
+        }
+    }
+    NodeAttestor "join_token" {
+        plugin_data {}
+    }
+    KeyManager "disk" {
+        plugin_data {
+            keys_path = "/opt/spire/data/server/keys.json"
+        }
+    }
+}
+EOF
+
+# 3. Start SPIRE Server
+./spire-server run -config server.conf &
+
+# 4. Create registration entries (workload identities)
+./spire-server entry create \
+  -spiffeID spiffe://homelab.local/web-frontend \
+  -parentID spiffe://homelab.local/spire/agent/join_token/xxx \
+  -selector unix:uid:1000
+
+./spire-server entry create \
+  -spiffeID spiffe://homelab.local/api-backend \
+  -parentID spiffe://homelab.local/spire/agent/join_token/xxx \
+  -selector docker:label:app:api
+
+# 5. Workloads automatically get X.509 SVIDs (certificates)
+# with identities like: spiffe://homelab.local/web-frontend
+```
+
+---
+
+### Project 11: SSH Certificate Authority
+
+**Goal:** Replace SSH key-based authentication with certificate-based authentication
+
+**What You'll Learn:**
+- SSH certificate types (user and host)
+- Short-lived SSH credentials
+- Centralized SSH access management
+- No more managing authorized_keys files
+
+**Tools Needed (Free):**
+- OpenSSH (built-in)
+- step-ca (optional, for automation)
+
+**Lab Architecture:**
+```
+┌─────────────────────┐
+│   SSH CA Server      │
+│                     │
+│   - User CA Key     │  Signs user certificates
+│   - Host CA Key     │  Signs host certificates
+│                     │
+└──────────┬──────────┘
+           │
+    ┌──────┴──────┐
+    ▼             ▼
+┌─────────┐  ┌─────────┐
+│ SSH Host │  │  User   │
+│ (trusts  │  │ (gets   │
+│ User CA) │  │ signed  │
+│          │  │ cert)   │
+│ Has host │  │         │
+│ cert     │  │ No more │
+│ signed   │  │ TOFU!   │
+│ by Host  │  │         │
+│ CA       │  │         │
+└─────────┘  └─────────┘
+```
+
+**Build Steps:**
+```bash
+# === 1. Create SSH CA Keys ===
+mkdir -p /etc/ssh/ca
+
+# User CA (signs user certificates)
+ssh-keygen -t ed25519 -f /etc/ssh/ca/user_ca -C "SSH User CA"
+
+# Host CA (signs host certificates)
+ssh-keygen -t ed25519 -f /etc/ssh/ca/host_ca -C "SSH Host CA"
+
+# === 2. Sign Host Certificates ===
+# Sign each server's host key
+ssh-keygen -s /etc/ssh/ca/host_ca \
+  -I "webserver.homelab.local" \
+  -h \
+  -n "webserver.homelab.local,webserver,192.168.1.10" \
+  -V +52w \
+  /etc/ssh/ssh_host_ed25519_key.pub
+
+# Configure the host to present the signed certificate
+# Add to /etc/ssh/sshd_config on each host:
+echo "HostCertificate /etc/ssh/ssh_host_ed25519_key-cert.pub" >> /etc/ssh/sshd_config
+systemctl restart sshd
+
+# === 3. Sign User Certificates ===
+# Sign a user's public key with principals (roles)
+ssh-keygen -s /etc/ssh/ca/user_ca \
+  -I "john.doe@homelab.local" \
+  -n "john,admin,webadmin" \
+  -V +24h \
+  -O source-address=192.168.1.0/24 \
+  -O no-port-forwarding \
+  ~/.ssh/id_ed25519.pub
+
+# View the certificate
+ssh-keygen -L -f ~/.ssh/id_ed25519-cert.pub
+
+# === 4. Configure Hosts to Trust the User CA ===
+# Add to /etc/ssh/sshd_config:
+echo "TrustedUserCAKeys /etc/ssh/ca/user_ca.pub" >> /etc/ssh/sshd_config
+
+# Map principals to system users
+echo 'AuthorizedPrincipalsFile /etc/ssh/auth_principals/%u' >> /etc/ssh/sshd_config
+
+# Create principal mappings
+mkdir -p /etc/ssh/auth_principals
+echo -e "admin\nwebadmin" > /etc/ssh/auth_principals/root
+echo -e "john\nwebadmin" > /etc/ssh/auth_principals/webuser
+
+systemctl restart sshd
+
+# === 5. Configure Clients to Trust the Host CA ===
+# Add to ~/.ssh/known_hosts or /etc/ssh/ssh_known_hosts:
+echo "@cert-authority *.homelab.local $(cat /etc/ssh/ca/host_ca.pub)" >> ~/.ssh/known_hosts
+# Now clients will trust ANY host signed by the Host CA — no more TOFU warnings!
+
+# === 6. Test ===
+ssh -i ~/.ssh/id_ed25519 -o CertificateFile=~/.ssh/id_ed25519-cert.pub john@webserver.homelab.local
+
+# === 7. Automate with step-ca (Optional) ===
+# Configure step-ca for SSH certificates
+step ca init --ssh
+
+# Issue SSH user certificate
+step ssh certificate john@homelab.local ~/.ssh/id_ed25519 \
+  --principal john --principal admin
+
+# Issue SSH host certificate
+step ssh certificate webserver.homelab.local /etc/ssh/ssh_host_ecdsa_key.pub \
+  --host --principal webserver.homelab.local --sign
+
+# List SSH certificate authority keys
+step ssh config --roots
+```
+
+**Bonus Challenges:**
+- ☐ Build a web portal for users to request SSH certificates
+- ☐ Integrate with OIDC (Google/GitHub) for authentication before signing
+- ☐ Set up certificate-based SSH bastion/jump host
+- ☐ Create different certificate validity periods based on user role
+- ☐ Implement emergency certificate revocation via KRL (Key Revocation List)
+
+---
+
+### Project 12: HSM Simulation with SoftHSM
+
+**Goal:** Learn HSM operations using SoftHSM2 (software-based HSM)
+
+**What You'll Learn:**
+- PKCS#11 interface
+- Hardware security module concepts
+- Key protection and non-exportability
+- Integration with OpenSSL and other tools
+
+**Build Steps:**
+```bash
+# === 1. Install SoftHSM2 ===
+sudo apt install softhsm2 opensc libengine-pkcs11-openssl
+
+# === 2. Initialize Tokens ===
+softhsm2-util --init-token --slot 0 --label "RootCA-Token" \
+  --pin 1234 --so-pin 5678
+
+softhsm2-util --init-token --slot 1 --label "IntermediateCA-Token" \
+  --pin 1234 --so-pin 5678
+
+# List slots
+softhsm2-util --show-slots
+
+# === 3. Generate Keys Inside the HSM ===
+# Generate RSA key pair inside HSM
+pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so \
+  --login --pin 1234 \
+  --keypairgen --key-type RSA:4096 \
+  --id 01 --label "RootCA-Key" \
+  --token-label "RootCA-Token"
+
+# List objects in the token
+pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so \
+  --login --pin 1234 \
+  --list-objects --token-label "RootCA-Token"
+
+# === 4. Use HSM Key with OpenSSL ===
+# Configure OpenSSL to use PKCS#11 engine
+export OPENSSL_CONF=/etc/ssl/openssl-pkcs11.cnf
+
+cat > /etc/ssl/openssl-pkcs11.cnf << 'EOF'
+openssl_conf = openssl_init
+
+[openssl_init]
+engines = engine_section
+
+[engine_section]
+pkcs11 = pkcs11_section
+
+[pkcs11_section]
+engine_id = pkcs11
+MODULE_PATH = /usr/lib/softhsm/libsofthsm2.so
+init = 0
+EOF
+
+# Generate CSR using HSM-stored key
+openssl req -engine pkcs11 -new \
+  -keyform engine \
+  -key "pkcs11:object=RootCA-Key;type=private;pin-value=1234" \
+  -out rootCA.csr \
+  -subj "/C=US/ST=HomeLab/O=MyHomeLab/CN=HomeLab Root CA (HSM)"
+
+# Self-sign to create Root CA cert
+openssl x509 -engine pkcs11 -req \
+  -keyform engine \
+  -signkey "pkcs11:object=RootCA-Key;type=private;pin-value=1234" \
+  -in rootCA.csr \
+  -out rootCA.crt \
+  -days 7300 -sha256
+
+# === 5. Sign Certificates Using HSM Key ===
+openssl x509 -engine pkcs11 -req \
+  -keyform engine \
+  -CAkey "pkcs11:object=RootCA-Key;type=private;pin-value=1234" \
+  -CA rootCA.crt \
+  -CAcreateserial \
+  -in server.csr \
+  -out server.crt \
+  -days 365 -sha256
+
+# === 6. Backup and Restore Tokens ===
+# Backup (copy the token database files)
+cp -r /var/lib/softhsm/tokens/ /backup/softhsm-tokens/
+
+# The key point: in a real HSM, keys are NON-EXPORTABLE
+# SoftHSM simulates this behavior for learning purposes
+```
+
+---
+
+### Project 13: Automated PKI Pipeline (CI/CD)
+
+**Goal:** Build a GitOps-driven PKI where certificate requests are code-reviewed and auto-deployed
+
+**Tools Needed (Free):**
+- Gitea or GitLab CE (self-hosted Git)
+- Jenkins or Drone CI (free CI/CD)
+- Ansible or Terraform
+- Your homelab CA
+
+**Lab Architecture:**
+```
+┌──────────┐    PR/MR     ┌──────────┐    Trigger    ┌──────────┐
+│ Engineer  │────────────►│  Gitea    │──────────────►│ Jenkins  │
+│           │             │  (Git)    │               │ (CI/CD)  │
+│ Creates   │             │           │               │          │
+│ cert      │  Code       │ Review &  │               │ Pipeline:│
+│ request   │  Review     │ Approve   │               │ 1. Lint  │
+│ YAML      │             │           │               │ 2. Sign  │
+└──────────┘             └──────────┘               │ 3. Deploy│
+                                                      │ 4. Verify│
+                                                      └─────┬────┘
+                                                            │
+                                                            ▼
+                                                     ┌──────────┐
+                                                     │  Ansible  │
+                                                     │  Deploy   │
+                                                     │           │
+                                                     │  Pushes   │
+                                                     │  certs to │
+                                                     │  servers  │
+                                                     └──────────┘
+```
+
+**Example Certificate Request YAML:**
+```yaml
+# cert-requests/web-server.yml
+certificate:
+  common_name: "web.homelab.local"
+  organization: "HomeLab"
+  san:
+    dns:
+      - "web.homelab.local"
+      - "www.homelab.local"
+    ip:
+      - "192.168.1.10"
+  key:
+    algorithm: RSA
+    size: 4096
+  validity_days: 365
+  usage:
+    - serverAuth
+  deploy_targets:
+    - host: web.homelab.local
+      cert_path: /etc/nginx/ssl/server.crt
+      key_path: /etc/nginx/ssl/server.key
+      reload_command: "systemctl reload nginx"
+```
+
+**Jenkins Pipeline (Jenkinsfile):**
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('Validate Request') {
+            steps {
+                sh '''
+                    # Validate YAML syntax
+                    python3 -c "import yaml; yaml.safe_load(open('cert-requests/web-server.yml'))"
+                    # Check for minimum key size
+                    # Check for valid SANs
+                    # Ensure no wildcard abuse
+                '''
+            }
+        }
+        stage('Generate & Sign Certificate') {
+            steps {
+                sh '''
+                    # Parse YAML and generate certificate
+                    openssl genrsa -out /tmp/server.key 4096
+                    openssl req -new -key /tmp/server.key -out /tmp/server.csr \
+                      -subj "/CN=web.homelab.local/O=HomeLab"
+                    openssl ca -config /opt/ca/openssl.cnf -batch \
+                      -in /tmp/server.csr -out /tmp/server.crt \
+                      -days 365 -extensions server_cert
+                '''
+            }
+        }
+        stage('Deploy Certificate') {
+            steps {
+                sh '''
+                    ansible-playbook deploy-cert.yml \
+                      -e "cert_file=/tmp/server.crt" \
+                      -e "key_file=/tmp/server.key" \
+                      -e "target_host=web.homelab.local"
+                '''
+            }
+        }
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                    echo | openssl s_client -connect web.homelab.local:443 \
+                      -servername web.homelab.local 2>/dev/null | \
+                      openssl x509 -noout -dates -subject
+                '''
+            }
+        }
+    }
+}
+```
+
+---
+
+### Project 14: Code Signing & S/MIME Email Encryption
+
+**Goal:** Issue certificates for code signing and encrypted email
+
+**Build Steps:**
+```bash
+# === Code Signing Certificate ===
+
+# Generate key for code signing
+openssl genrsa -aes256 -out codesign.key 4096
+
+# Generate CSR
+openssl req -new -key codesign.key -out codesign.csr \
+  -subj "/C=US/ST=HomeLab/O=MyHomeLab/CN=HomeLab Code Signing"
+
+# Sign with extended key usage for code signing
+openssl x509 -req -in codesign.csr \
+  -CA intermediate.crt -CAkey intermediate.key -CAcreateserial \
+  -out codesign.crt -days 365 -sha256 \
+  -extfile <(printf "keyUsage=critical,digitalSignature\nextendedKeyUsage=critical,codeSigning\nbasicConstraints=CA:FALSE")
+
+# Sign a script
+openssl dgst -sha256 -sign codesign.key -out script.sh.sig script.sh
+
+# Verify the signature
+openssl dgst -sha256 -verify <(openssl x509 -in codesign.crt -pubkey -noout) \
+  -signature script.sh.sig script.sh
+
+# === S/MIME Email Certificate ===
+
+# Generate key for email
+openssl genrsa -aes256 -out email.key 2048
+
+# Generate email certificate
+openssl req -new -key email.key -out email.csr \
+  -subj "/C=US/O=MyHomeLab/CN=John Doe/emailAddress=john@homelab.local"
+
+openssl x509 -req -in email.csr \
+  -CA intermediate.crt -CAkey intermediate.key -CAcreateserial \
+  -out email.crt -days 365 -sha256 \
+  -extfile <(printf "keyUsage=critical,digitalSignature,keyEncipherment\nextendedKeyUsage=emailProtection\nbasicConstraints=CA:FALSE\nsubjectAltName=email:john@homelab.local")
+
+# Export as PKCS#12 for Thunderbird/Outlook import
+openssl pkcs12 -export -out john_email.p12 \
+  -inkey email.key -in email.crt -certfile ca-chain.crt \
+  -name "John Doe Email Certificate"
+
+# Sign an email
+openssl smime -sign -in message.txt -out signed_message.eml \
+  -signer email.crt -inkey email.key -certfile ca-chain.crt
+
+# Encrypt an email (need recipient's public cert)
+openssl smime -encrypt -aes256 -in message.txt -out encrypted_message.eml \
+  recipient_email.crt
+
+# Decrypt an email
+openssl smime -decrypt -in encrypted_message.eml \
+  -recip email.crt -inkey email.key
+
+# Verify a signed email
+openssl smime -verify -in signed_message.eml -CAfile ca-chain.crt
+```
+
+---
+
+### Project 15: Full PKI Disaster Recovery Lab
+
+**Goal:** Practice CA backup, recovery, and compromise response
+
+**Scenarios to Practice:**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│              DISASTER RECOVERY SCENARIOS                  │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  Scenario 1: Intermediate CA Key Compromised             │
+│  → Revoke intermediate cert                              │
+│  → Issue new intermediate from Root CA                   │
+│  → Re-issue ALL end-entity certificates                  │
+│  → Distribute new CRL and update trust stores            │
+│                                                          │
+│  Scenario 2: Root CA Server Hardware Failure              │
+│  → Restore Root CA from encrypted backup                 │
+│  → Verify key integrity                                  │
+│  → Resume operations                                     │
+│                                                          │
+│  Scenario 3: CRL Distribution Point Down                  │
+│  → Deploy backup CRL distribution                        │
+│  → Test OCSP failover                                    │
+│  → Verify certificate validation still works             │
+│                                                          │
+│  Scenario 4: Rogue Certificate Issued                     │
+│  → Identify the unauthorized cert                        │
+│  → Revoke immediately                                    │
+│  → Audit all recently issued certificates                │
+│  → Update certificate policies                           │
+│                                                          │
+│  Scenario 5: Complete PKI Rebuild                         │
+│  → Build new Root CA from scratch                        │
+│  → Migrate all services to new PKI                       │
+│  → Decommission old PKI                                  │
+│  → Update all trust stores                               │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📚 Recommended Learning Path
+
+```
+WEEK 1-2:     Project 1 (Root CA) → Project 3 (Secure Services)
+                 ↓
+WEEK 3-4:     Project 2 (Two-Tier CA) → Project 4 (mTLS)
+                 ↓
+WEEK 5-6:     Project 5 (Vault PKI) → Project 7 (Kubernetes cert-manager)
+                 ↓
+WEEK 7-8:     Project 8 (step-ca ACME) → Project 11 (SSH Certificates)
+                 ↓
+WEEK 9-10:    Project 9 (Monitoring) → Project 10 (Zero Trust)
+                 ↓
+WEEK 11-12:   Project 12 (HSM) → Project 13 (CI/CD) → Project 14 & 15
+```
+
+---
+
+## 🧰 Free Tools & Resources Summary
+
+| Tool | Purpose | URL |
+|------|---------|-----|
+| **OpenSSL** | Core PKI operations | Pre-installed on Linux |
+| **step-ca** | ACME CA server | smallstep.com |
+| **HashiCorp Vault** | Secret & PKI management | vaultproject.io |
+| **cert-manager** | Kubernetes certificate automation | cert-manager.io |
+| **SoftHSM2** | HSM simulation | opendnssec.org |
+| **EJBCA CE** | Full-featured CA server | ejbca.org |
+| **Dogtag PKI** | Red Hat PKI system | dogtagpki.org |
+| **Nebula** | Certificate-based mesh VPN | github.com/slackhq/nebula |
+| **SPIRE** | SPIFFE identity framework | spiffe.io |
+| **Lemur** | Certificate management (Netflix) | github.com/Netflix/lemur |
+| **cfssl** | Cloudflare's PKI toolkit | github.com/cloudflare/cfssl |
+| **mkcert** | Local development certs | github.com/FiloSottile/mkcert |
+| **Prometheus** | Monitoring | prometheus.io |
+| **Grafana** | Dashboards | grafana.com |
+| **XCA** | GUI Certificate Manager | hohnstaedt.de/xca |
+
+---
+
+> 💡 **Tips for Success:**
+> - **Start simple** — Project 1 teaches fundamentals everything else builds on
+> - **Document everything** — Keep a lab notebook/wiki of what you build
+> - **Break things on purpose** — Expire certs, revoke certs, corrupt keys, then fix them
+> - **Use VMs/Containers** — Snapshot before experiments so you can roll back
+> - **Combine projects** — The real power comes from integrating multiple projects together
+> - **Simulate real incidents** — Practice the disaster recovery scenarios in Project 15
+> - **Share your work** — Blog about it, put configs on GitHub, build your portfolio
