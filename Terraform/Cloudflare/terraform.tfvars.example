@@ -1,0 +1,130 @@
+cloudflare_api_token  = "your-api-token-here"
+cloudflare_account_id = "your-account-id-here"
+
+domains = {
+
+  # ─── Domain 1: example.com ───
+  "example.com" = {
+    zone_id = "abc123zoneid"
+
+    page_rules = [
+      {
+        target   = "http://example.com/*"
+        priority = 1
+        actions = {
+          always_use_https = true
+        }
+      },
+      {
+        target   = "example.com/api/*"
+        priority = 2
+        actions = {
+          cache_level       = "bypass"
+          security_level    = "high"
+          browser_cache_ttl = 0
+        }
+      },
+      {
+        target   = "example.com/old-page"
+        priority = 3
+        actions = {
+          forwarding_url = {
+            url         = "https://example.com/new-page"
+            status_code = 301
+          }
+        }
+      }
+    ]
+
+    waf_custom_rules = [
+      {
+        description = "Block requests from known bad IPs"
+        expression  = "(ip.src in {192.0.2.0/24 198.51.100.0/24})"
+        action      = "block"
+      },
+      {
+        description = "Challenge suspicious user agents"
+        expression  = "(http.user_agent contains \"BadBot\") or (http.user_agent contains \"Scraper\")"
+        action      = "managed_challenge"
+      },
+      {
+        description = "Allow only specific countries to admin"
+        expression  = "(http.request.uri.path contains \"/admin\") and not (ip.geoip.country in {\"US\" \"GB\" \"DE\"})"
+        action      = "block"
+      }
+    ]
+
+    redirect_rules = [
+      {
+        description = "Redirect blog to new subdomain"
+        expression  = "(http.request.uri.path starts_with \"/blog\")"
+        target_url  = "https://blog.example.com"
+        status_code = 301
+      }
+    ]
+
+    rate_limiting_rules = [
+      {
+        description         = "Rate limit login endpoint"
+        expression          = "(http.request.uri.path eq \"/api/login\") and (http.request.method eq \"POST\")"
+        action              = "block"
+        requests_per_period = 5
+        period              = 60
+        mitigation_timeout  = 600
+      },
+      {
+        description         = "General API rate limit"
+        expression          = "(http.request.uri.path starts_with \"/api/\")"
+        action              = "managed_challenge"
+        requests_per_period = 100
+        period              = 60
+        mitigation_timeout  = 60
+      }
+    ]
+
+    request_header_rules = [
+      {
+        description = "Add custom origin header"
+        expression  = "(http.request.uri.path starts_with \"/api/\")"
+        headers = [
+          {
+            operation = "set"
+            name      = "X-Custom-Origin"
+            value     = "cloudflare-proxy"
+          },
+          {
+            operation = "remove"
+            name      = "X-Powered-By"
+          }
+        ]
+      }
+    ]
+  }
+
+  # ─── Domain 2: another-domain.com ───
+  "another-domain.com" = {
+    zone_id = "def456zoneid"
+
+    page_rules = [
+      {
+        target   = "http://another-domain.com/*"
+        priority = 1
+        actions = {
+          always_use_https = true
+        }
+      }
+    ]
+
+    waf_custom_rules = [
+      {
+        description = "Block all non-GET requests"
+        expression  = "(http.request.method ne \"GET\")"
+        action      = "block"
+      }
+    ]
+
+    redirect_rules       = []
+    rate_limiting_rules   = []
+    request_header_rules  = []
+  }
+}
